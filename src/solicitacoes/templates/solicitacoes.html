@@ -1,0 +1,226 @@
+{% extends 'menu.html' %}
+{% load static %}
+{% block content %}
+<div class="content-page">
+    <div class="content">
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">     
+                        <h4 class="page-title">Solicitações</h4>
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item active">Solicitações</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+
+            <div class="row">
+               
+
+                <div class="col-12">
+                  
+                    <div class="card">
+                        <ul class="list-group list-group-flush">
+                            
+                            <li class="list-group-item">
+                                <div class="row">
+                                <div class="col-4">
+                                    <div class="mb-3">
+                                        <label for="simpleinput" class="form-label">Título: </label>
+                                        <input type="text" id="simpleinput" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="mb-3">
+                                        <label for="simpleinput" class="form-label">Prazo de Entrega: </label>
+                                        <input type="text" class="form-control" placeholder="Informe o vencimento" data-toggle="input-mask" data-mask-format="00/00/0000" maxlength="10">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="mb-3">
+                                        <label for="simpleinput" class="form-label">Informe o Destino</label>
+                                        <select class="form-control select2" data-toggle="select2">
+                                            <option>COTEC</option>
+                                            <option>EFG</option>
+                                            <option>BASILEU</option>
+                                            <option>CETT</option>
+                                            
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="card border-success border">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-success">Briefing</h5>
+                                            <div class="mb-2">
+                                  
+                                                <div id="snow-editor" style="height: 300px;">
+                                                   
+                                                </div><!-- end Snow-editor-->
+                                            </div>
+                                        </div> <!-- end card-body-->
+                                    </div>
+                                </div>
+                                <div class="col-10"></div>
+                                <div class="col-2">
+                                    <button style="width: 100%;" type="button" class="btn btn-info"><i class="ri-rocket-line me-1"></i> <span>Realizar Solicitação</span> </button>
+                                </div>
+                            </div>
+                            </li>
+
+                        
+                        </ul> <!-- end list-->
+                    </div> <!-- end card-->
+
+                    <div class="col-md-12">
+                        <div class="card">
+                            <h5 class="card-header bg-warning-subtle">Minhas Solicitações</h5>
+                            <div class="card-body">
+                                <div class="row">
+                                <div class="col-3">
+                                    <div class="mb-3">
+                                        <label for="simpleinput" class="form-label">Solicitação:</label>
+                                        <select class="form-control select2" data-toggle="select2">
+                                            <option></option>
+                                            <option>Logo EFG EaD</option>
+                                            <option>Templates para abertura e fechamento de videoaulas EFG EaD</option>
+                                            <option>SAC redes sociais</option>
+                                            
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-3">
+                                    <div class="mb-3">
+                                        <label for="simpleinput" class="form-label">Data da Solicitação:</label>
+                                        <input type="text" class="form-control" placeholder="Informe o vencimento" data-toggle="input-mask" data-mask-format="00/00/0000" maxlength="10">
+                                    </div>
+                                </div>
+
+                                <div class="col-3">
+                                    <div class="mb-3">
+                                        <label for="simpleinput" class="form-label">Setor:</label>
+                                        <select class="form-control select2" data-toggle="select2">
+                                            <option></option>
+                                            <option>COTEC</option>
+                                            <option>EFG</option>
+                                            <option>BASILEU</option>
+                                            <option>CETT</option>
+                                            
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-3">
+                                    <div class="mb-3">
+                                        <label for="simpleinput" class="form-label">Status:</label>
+                                        <select class="form-control select2" data-toggle="select2">
+                                            <option></option>
+                                            <option>Aguardando Entregas</option>
+                                            <option>Cancelada</option>
+                                            <option>Concluído</option>
+                                            
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                                <div class="table-responsive-sm">
+                                    <table class="table table-centered mb-0">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>Título</th>
+                                                <th>Data da Solicitação</th>
+                                                <th>Prazo de Entrega</th>
+                                                <th>Setor</th>
+                                                <th>Solicitante</th>
+                                                <th>Status</th>
+                                         
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr style="cursor: pointer;"  onclick="acessarSolicitacao('{{solicitacao.id}}')">
+                                                <td>Logo EFG EaD</td>
+                                                <td>16/11/2023</td>
+                                                <td>18/11/2023</td>
+                                                <td>EFG</td>
+                                                <td>
+                                                    <div id="tooltip-container3">
+                                                        <img src="{% static 'layouts/assets/images/users/avatar-2.jpg' %}" alt="image" class="avatar-xs rounded-circle me-1" data-bs-container="#tooltip-container3" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Danilo Martins" data-bs-original-title="Danilo Martins">
+                                                    </div>
+                                                </td>
+                                                <td><span class="badge badge-outline-warning rounded-pill">Aguardando Entregas</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Templates para abertura e fechamento de videoaulas EFG EaD</td>
+                                                <td>16/11/2023</td>
+                                                <td>18/11/2023</td>
+                                                <td>COTEC</td>
+                                                <td>
+                                                    <div id="tooltip-container3">
+                                                        <img src="{% static 'layouts/assets/images/users/avatar-2.jpg' %}" alt="image" class="avatar-xs rounded-circle me-1" data-bs-container="#tooltip-container3" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Danilo Martins" data-bs-original-title="Danilo Martins">
+                                                    </div>
+                                                </td>
+                                                <td><span class="badge badge-outline-success rounded-pill">Concluído</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>SAC redes sociais</td>
+                                                <td>16/11/2023</td>
+                                                <td>18/11/2023</td>
+                                                <td>BASILEU</td>
+                                                <td>
+                                                    <div id="tooltip-container3">
+                                                        <img src="{% static 'layouts/assets/images/users/avatar-2.jpg' %}" alt="image" class="avatar-xs rounded-circle me-1" data-bs-container="#tooltip-container3" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Danilo Martins" data-bs-original-title="Danilo Martins">
+                                                    </div>
+                                            </td>
+                                                <td><span class="badge badge-outline-danger rounded-pill">Cancelada</span></td>
+                                            </tr>
+                                      
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div> <!-- end card-body-->
+                        </div> <!-- end card-->
+                    </div>
+
+                </div> <!-- end col-->
+            </div>
+            <!-- end row -->
+
+        </div> <!-- container -->
+
+    </div> <!-- content -->
+
+    <!-- Footer Start -->
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <script>document.write(new Date().getFullYear())</script> © Jidox - Coderthemes.com
+                </div>
+                <div class="col-md-6">
+                    <div class="text-md-end footer-links d-none d-md-block">
+                        <a href="javascript: void(0);">About</a>
+                        <a href="javascript: void(0);">Support</a>
+                        <a href="javascript: void(0);">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- end Footer -->
+
+</div>
+<script>
+    function acessarSolicitacao(solicitacaoId){
+        window.location.href = "timeline";
+    }
+
+</script>
+{% endblock %}
