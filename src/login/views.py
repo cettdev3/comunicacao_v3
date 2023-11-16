@@ -58,7 +58,7 @@ def Autenticar(request):
 
         if user is not None:
             login(request, user)
-            return redirect('/solicitacoes')
+            return redirect('/dashboard')
         else:
             messages.error(request, ' Usuário/Senha inválidos!')
             return redirect('/')
