@@ -24,6 +24,7 @@ urlpatterns = [
     path('', include('menu.urls')),
     path('', include('dashboard.urls')),
     path('', include('solicitacoes.urls')),
+    path('', include('minhas_tarefas.urls')),
 
 
 
