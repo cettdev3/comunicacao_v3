@@ -83,6 +83,12 @@
                             <h5 class="card-header bg-warning-subtle">Minhas Solicitações</h5>
                             <div class="card-body">
                                 <div class="row">
+                                    <div class="col-2">
+                                        <div class="mb-3">
+                                            <label for="simpleinput" class="form-label">ID:</label>
+                                            <input type="text" class="form-control" placeholder="Informe o id" maxlength="99">
+                                        </div>
+                                    </div>
                                 <div class="col-3">
                                     <div class="mb-3">
                                         <label for="simpleinput" class="form-label">Solicitação:</label>
@@ -96,14 +102,14 @@
                                     </div>
                                 </div>
 
-                                <div class="col-3">
+                                <div class="col-2">
                                     <div class="mb-3">
                                         <label for="simpleinput" class="form-label">Data da Solicitação:</label>
                                         <input type="text" class="form-control" placeholder="Informe o vencimento" data-toggle="input-mask" data-mask-format="00/00/0000" maxlength="10">
                                     </div>
                                 </div>
 
-                                <div class="col-3">
+                                <div class="col-2">
                                     <div class="mb-3">
                                         <label for="simpleinput" class="form-label">Setor:</label>
                                         <select class="form-control select2" data-toggle="select2">
@@ -135,6 +141,7 @@
                                     <table class="table table-centered mb-0">
                                         <thead class="table-dark">
                                             <tr>
+                                                <th>ID</th>
                                                 <th>Título</th>
                                                 <th>Data da Solicitação</th>
                                                 <th>Prazo de Entrega</th>
@@ -146,6 +153,7 @@
                                         </thead>
                                         <tbody>
                                             <tr style="cursor: pointer;"  onclick="acessarSolicitacao('{{solicitacao.id}}')">
+                                                <td>#223</td>
                                                 <td>Logo EFG EaD</td>
                                                 <td>16/11/2023</td>
                                                 <td>18/11/2023</td>
@@ -158,6 +166,7 @@
                                                 <td><span class="badge badge-outline-warning rounded-pill">Aguardando Entregas</span></td>
                                             </tr>
                                             <tr>
+                                                <td>#229</td>
                                                 <td>Templates para abertura e fechamento de videoaulas EFG EaD</td>
                                                 <td>16/11/2023</td>
                                                 <td>18/11/2023</td>
@@ -170,6 +179,7 @@
                                                 <td><span class="badge badge-outline-success rounded-pill">Concluído</span></td>
                                             </tr>
                                             <tr>
+                                                <td>#230</td>
                                                 <td>SAC redes sociais</td>
                                                 <td>16/11/2023</td>
                                                 <td>18/11/2023</td>
