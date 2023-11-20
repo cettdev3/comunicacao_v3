@@ -1,6 +1,17 @@
 {% extends 'menu.html' %}
 {% load static %}
 {% block content %}
+<style>
+.file-icon {
+    font-size: 24px;
+    margin-right: 10px;
+}
+
+.remove-button {
+    cursor: pointer;
+    color: red;
+}
+</style>
 <div class="content-page">
     <div class="content">
 
@@ -242,19 +253,27 @@
                                             <div class="accordion" id="accordionExample">
                                                 <div class="accordion-item">
                                                     <h2 class="accordion-header" id="headingOne">
-                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                                                        <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
                                                             aria-expanded="true" aria-controls="collapseOne">
                                                             Logo EFG
                                                         </button>
                                                     </h2>
-                                                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                                                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
                                                         data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
-                                                            <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse
-                                                            plugin adds the appropriate classes that we use to style each element. These classes control the overall
-                                                            appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with
-                                                            custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go
-                                                            within the <code>.accordion-body</code>, though the transition does limit overflow.
+                                                            <div class="row d-flex align-items-center justify-content-center">
+                                                           
+                                                                <div class="col-12 col-sm-12 col-md-12" style="text-align: center;">
+                                                                    <label for="fileInput" class="btn btn-primary">
+                                                                        <i class="ri-file-fill"></i> ESCOLHER ARQUIVOS
+                                                                    </label>
+                                                                </div>
+                                                                    <input style="width: 100%;" type="file" id="fileInput" class="d-none" multiple onchange="showSelectedFiles()">
+                                                                    <div  class="row mt-2" id="fileDisplay"></div>
+                                                          
+                                                            </div>
+                                                            <hr>
+                                                            <button style="width: 100%;" type="button" class="btn btn-success"><i class="ri-checkbox-circle-line me-1"></i> <span>Realizar Entrega</span> </button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -268,11 +287,19 @@
                                                     <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
                                                         data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
-                                                            <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse
-                                                            plugin adds the appropriate classes that we use to style each element. These classes control the overall
-                                                            appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with
-                                                            custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go
-                                                            within the <code>.accordion-body</code>, though the transition does limit overflow.
+                                                            <div class="row d-flex align-items-center justify-content-center">
+                                                
+                                                                <div class="col-12 col-sm-12 col-md-12" style="text-align: center;">
+                                                                    <label for="fileInput" class="btn btn-primary">
+                                                                        <i class="ri-file-fill"></i> ESCOLHER ARQUIVOS
+                                                                    </label>
+                                                                </div>
+                                                                    <input style="width: 100%;" type="file" id="fileInput" class="d-none" multiple onchange="showSelectedFiles()">
+                                                                    <div  class="row mt-2" id="fileDisplay"></div>
+                                                          
+                                                            </div>
+                                                            <hr>
+                                                            <button style="width: 100%;" type="button" class="btn btn-success"><i class="ri-checkbox-circle-line me-1"></i> <span>Realizar Entrega</span> </button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -335,6 +362,8 @@
                                                                         <th>Usuário Designado</th>
                                                                         <th>Data de Designação</th>
                                                                         <th>Peça</th>
+                                                                        <th>Status</th>
+                                                                        <th>Ação</th>
                                                                       
                                                                     </tr>
                                                                 </thead>
@@ -346,6 +375,8 @@
                                                                         </td>
                                                                         <td>17/11/2023</td>
                                                                         <td>Logo EFG</td>
+                                                                        <td><span class="badge badge-outline-warning rounded-pill">Não Iniciou</span></td>
+                                                                        <td><button style="width: 100%;" type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#bs-example-modal-lg"><i class="ri-eye-line me-1"></i> <span>Visualizar</span> </button></td>
                                                                       
                                                                     </tr>
                                                                     <tr>
@@ -355,6 +386,8 @@
                                                                         </td>
                                                                         <td>17/11/2023</td>
                                                                         <td>Arte Gráfica</td>
+                                                                        <td><span class="badge badge-outline-warning rounded-pill">Não Iniciou</span></td>
+                                                                        <td><button style="width: 100%;" type="button" class="btn btn-info"><i class="ri-eye-line me-1"></i> <span>Visualizar</span> </button></td>
                                                                         
                                                                     </tr>
                                                                     <tr>
@@ -364,6 +397,8 @@
                                                                         </td>
                                                                         <td>17/11/2023</td>
                                                                         <td>Logo EFG</td>
+                                                                        <td><span class="badge badge-outline-warning rounded-pill">Não Iniciou</span></td>
+                                                                        <td><button style="width: 100%;" type="button" class="btn btn-info"><i class="ri-eye-line me-1"></i> <span>Visualizar</span> </button></td>
                                                                        
                                                                     </tr>
                                                                     <tr>
@@ -373,6 +408,8 @@
                                                                         </td>
                                                                         <td>17/11/2023</td>
                                                                         <td>Arte Gráfica</td>
+                                                                        <td><span class="badge badge-outline-warning rounded-pill">Não Iniciou</span></td>
+                                                                        <td><button style="width: 100%;" type="button" class="btn btn-info"><i class="ri-eye-line me-1"></i> <span>Visualizar</span> </button></td>
                                                                        
                                                                     </tr>
                                                                 </tbody>
@@ -515,6 +552,21 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+
+    <div class="modal fade" id="bs-example-modal-lg"  aria-labelledby="myLargeModalLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myLargeModalLabel">Large modal</h4>
+                    <button type="button" class="btn-close"data-bs-toggle="modal" data-bs-target="#task-detail-modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
     <!-- Footer Start -->
     <footer class="footer">
         <div class="container-fluid">
@@ -535,7 +587,50 @@
     <!-- end Footer -->
 
 </div>
+<script>
+function showSelectedFiles() {
+    const fileInput = document.getElementById('fileInput');
+    const fileDisplay = document.getElementById('fileDisplay');
 
+    // Limpa a exibição de arquivos anteriores
+    fileDisplay.innerHTML = "";
 
+    const files = fileInput.files;
+    for (let i = 0; i < files.length; i++) {
+        const fileName = files[i].name;
+        const listItem = document.createElement('div');
+        listItem.className = "col-auto";
+        listItem.innerHTML = `
+            <i class="ri-file-fill"></i>
+            ${fileName}
+            <i class="ri-eraser-line remove-button" onclick="removeFile(${i})"></i>
+        `;
+        fileDisplay.appendChild(listItem);
+    }
+}
 
+function removeFile(index) {
+    const fileInput = document.getElementById('fileInput');
+    const files = Array.from(fileInput.files);
+    files.splice(index, 1);
+
+    // Cria um novo input de arquivo e copia os arquivos restantes
+    const newFileInput = document.createElement('input');
+    newFileInput.type = 'file';
+    newFileInput.id = 'fileInput';
+    newFileInput.multiple = true;
+    newFileInput.style.display = 'none';
+    newFileInput.addEventListener('change', showSelectedFiles);
+
+    const dataTransfer = new DataTransfer();
+    files.forEach(file => dataTransfer.items.add(file));
+    newFileInput.files = dataTransfer.files;
+
+    // Substitui o input de arquivo anterior
+    fileInput.parentNode.replaceChild(newFileInput, fileInput);
+
+    // Atualize a lista de arquivos selecionados
+    showSelectedFiles();
+}
+</script>
 {% endblock %}
