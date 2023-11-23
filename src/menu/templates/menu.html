@@ -57,28 +57,6 @@
                 <div class="topbar container-fluid">
                     <div class="d-flex align-items-center gap-lg-2 gap-1">
 
-                        <!-- Topbar Brand Logo -->
-                        <div class="logo-topbar">
-                            <!-- Logo light -->
-                            <a href="index-2.html" class="logo-light">
-                                <span class="logo-lg">
-                                    <img src="{% static 'layouts/assets/images/logo.png' %}" alt="logo">
-                                </span>
-                                <span class="logo-sm">
-                                    <img src="{% static 'layouts/assets/images/logo.png' %}" alt="small logo">
-                                </span>
-                            </a>
-
-                            <!-- Logo Dark -->
-                            <a href="index-2.html" class="logo-dark">
-                                <span class="logo-lg">
-                                    <img src="{% static 'layouts/assets/images/logo.png' %}" alt="dark logo">
-                                </span>
-                                <span class="logo-sm">
-                                    <img src="{% static 'layouts/assets/images/logo.png' %}" alt="small logo">
-                                </span>
-                            </a>
-                        </div>
 
                         <!-- Sidebar Menu Toggle Button -->
                         <button class="button-toggle-menu">
@@ -310,13 +288,18 @@
                                 </span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
-                      
+                                
+                                <a href="auth-logout-2.html" class="dropdown-item">
+                                    <i class="ri-settings-3-fill me-1"></i>
+                                    <span>Configurações</span>
+                                </a>
 
                                 <!-- item-->
                                 <a href="auth-logout-2.html" class="dropdown-item">
                                     <i class="ri-logout-box-fill align-middle me-1"></i>
                                     <span>Logout</span>
                                 </a>
+                                
                             </div>
                         </li>
                     </ul>
@@ -394,7 +377,7 @@
 
                         <li class="side-nav-item">
                             <a href="/meus-jobs" class="side-nav-link">
-                                <i class="ri-list-check-3"></i>
+                                <i class="ri-list-check-3"></i> 
                                 <span> Meus Jobs </span>
                             </a>
                         </li>
@@ -402,7 +385,7 @@
                         <li class="side-nav-item">
                             <a href="/todos-jobs" class="side-nav-link">
                                 <i class="ri-todo-line"></i>
-                                <span> Todas os Jobs </span>
+                                <span> Todos os Jobs </span>
                             </a>
                         </li>
 
