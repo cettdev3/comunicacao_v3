@@ -289,9 +289,9 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
                                 
-                                <a href="auth-logout-2.html" class="dropdown-item">
+                                <a data-bs-toggle="modal" data-bs-target="#standard-modal" href="#" class="dropdown-item">
                                     <i class="ri-settings-3-fill me-1"></i>
-                                    <span>Configurações</span>
+                                    <span>Alterar Foto</span>
                                 </a>
 
                                 <!-- item-->
@@ -390,7 +390,7 @@
                         </li>
 
                         <li class="side-nav-item">
-                          <a href="#" class="side-nav-link">
+                          <a href="/repositorio" class="side-nav-link">
                               <i class="ri-folder-4-fill"></i>
                               <span> Repositório de Arquivos </span>
                           </a>
@@ -421,7 +421,28 @@
         </div>
         <!-- END wrapper -->
 
-
+        <div id="standard-modal" class="modal fade" tabindex="-1" aria-labelledby="standard-modalLabel" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="standard-modalLabel">Configurações</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Foto: </label>
+                                <input type="file" id="example-fileinput" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Fechar</button>
+                        <button type="button" class="btn btn-primary">Atualizar Foto</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
         <!-- Vendor js -->
         <script src="{% static 'layouts/assets/js/vendor.min.js' %}"></script>
 
