@@ -15,7 +15,6 @@ class Solicitacoes(models.Model):
     data_solicitacao = models.DateTimeField(default=timezone.now,null=False,blank=False)
     prazo_entrega = models.DateField(null=False,blank=False)
     briefing = models.TextField(null=False,blank=False)
-    arquivos = models.TextField(null=True,blank=True)
     status = models.IntegerField(choices=choices_status,null=False,blank=False)
 
     def get_status_display(self):
