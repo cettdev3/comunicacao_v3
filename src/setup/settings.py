@@ -112,7 +112,7 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 DATABASES = {
    'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'comunicacao',
+        'NAME': 'comunicacao_v3',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',

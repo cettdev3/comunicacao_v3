@@ -1,0 +1,99 @@
+{% extends 'menu.html' %}
+{% load static %}
+{% block content %}
+<div class="content-page">
+    <div class="content">
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">     
+                        <h4 class="page-title">Repositório</h4>
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item active">Repositório</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+
+            <div class="row">
+               
+
+                <div class="col-12">
+                  
+                    <div class="card">
+                        <ul class="list-group list-group-flush">
+                            
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-9">
+                                        <div class="mb-3">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="mb-3">
+                                            <button style="width: 100%;" type="button" class="btn btn-soft-info"><i class="ri-folder-2-line me-1"></i>ADD Pasta</button>
+                                        </div>
+                                    </div>
+                                <div class="col-4">
+                                    <div class="mb-3">
+                                        <button style="width: 100%;" type="button" class="btn btn-outline-warning"><i class="ri-folder-2-line me-1" style="font-size: 50px;"></i><br>Arquivos EFG</button>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="mb-3">
+                                        <button style="width: 100%;" type="button" class="btn btn-outline-warning"><i class="ri-folder-2-line me-1" style="font-size: 50px;"></i><br>Arquivos COTEC</button>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="mb-3">
+                                        <button style="width: 100%;" type="button" class="btn btn-outline-warning"><i class="ri-folder-2-line me-1" style="font-size: 50px;"></i><br>Arquivos Seleção</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                            </li>
+
+                        
+                        </ul> <!-- end list-->
+                    </div> <!-- end card-->
+
+                </div> <!-- end col-->
+            </div>
+            <!-- end row -->
+
+        </div> <!-- container -->
+
+    </div> <!-- content -->
+
+    <!-- Footer Start -->
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <script>document.write(new Date().getFullYear())</script> © CETT - Comunicação
+                </div>
+                <div class="col-md-6">
+                    <div class="text-md-end footer-links d-none d-md-block">
+                        <a href="javascript: void(0);">About</a>
+                        <a href="javascript: void(0);">Support</a>
+                        <a href="javascript: void(0);">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- end Footer -->
+
+</div>
+<script>
+    function acessarSolicitacao(solicitacaoId){
+        window.location.href = "timeline";
+    }
+
+</script>
+{% endblock %}
