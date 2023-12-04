@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'minhas_tarefas',
     'todas_tarefas',
     'repositorio',
+    'perfil',
     
 
 ]
