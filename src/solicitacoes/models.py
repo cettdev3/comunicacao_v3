@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Solicitacoes(models.Model):
-    choice_projeto = [('1','EFG'),('2','COTEC'),('3','CETT'),('4','BASILEU')]
-    choices_status = [('1','EM ANÁLISE'),('2','EM PRODUÇÃO'),('3','CONCLUÍDA'),('4','DEVOLVIDA'),('5','CANCELADA')]
+    choice_projeto = [(1,'EFG'),(2,'COTEC'),(3,'CETT'),(4,'BASILEU')]
+    choices_status = [(1,'EM ANÁLISE'),(2,'EM PRODUÇÃO'),(3,'CONCLUÍDA'),(4,'DEVOLVIDA'),(5,'CANCELADA')]
 
     id = models.AutoField(primary_key=True)
     titulo = models.TextField(null=False,blank=False)
