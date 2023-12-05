@@ -25,3 +25,26 @@ class Solicitacoes(models.Model):
 
     class Meta:
         db_table = 'solicitacoes'
+
+
+class Pecas(models.Model):
+   
+    id = models.AutoField(primary_key=True)
+    titulo = models.TextField(null=False,blank=False)
+    solicitacao = models.ForeignKey(Solicitacoes,on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'pecas'
+
+
+class Demandas(models.Model):
+    choice_status = [(1,'A Fazer'),(2,'Em Progresso'),(3,'Em Revisão'),(4,'Concluído')]
+    id = models.AutoField(primary_key=True)
+    peca = models.ForeignKey(Pecas,on_delete=models.CASCADE)
+    designante = models.ForeignKey(User,on_delete=models.CASCADE)
+    autor = models.ForeignKey(User, related_name='designante',on_delete=models.CASCADE)
+    data_designacao = models.DateField(default=timezone.now, null=True, blank=True)
+    status = models.IntegerField(choices=choice_status,null=False,blank=False)
+
+    class Meta:
+        db_table = 'demandas'
