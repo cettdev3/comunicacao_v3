@@ -46,11 +46,12 @@
                                     <div class="mb-3">
                                         <label for="simpleinput" class="form-label">Informe o Destino</label>
                                         <select class="form-control select2" data-toggle="select2">
+                                            {% for solicitacao in solicitacoes %}
                                             <option>COTEC</option>
                                             <option>EFG</option>
                                             <option>BASILEU</option>
                                             <option>CETT</option>
-                                            
+                                            {% endfor %}
                                         </select>
                                     </div>
                                 </div>
@@ -83,24 +84,24 @@
 
                     <div class="col-md-12">
                         <div class="card">
-                            <h5 class="card-header bg-warning-subtle">Minhas Solicitações</h5>
+                            <h5 class="card-header bg-success-subtle">Minhas Solicitações</h5>
                             <div class="card-body">
+                                <form id="formFilters">
                                 <div class="row">
                                     <div class="col-2">
                                         <div class="mb-3">
                                             <label for="simpleinput" class="form-label">ID:</label>
-                                            <input type="text" class="form-control" placeholder="Informe o id" maxlength="99">
+                                            <input type="text" class="form-control" name="idSolicitacao" id="idSolicitacao" placeholder="Informe o id">
                                         </div>
                                     </div>
                                 <div class="col-3">
                                     <div class="mb-3">
                                         <label for="simpleinput" class="form-label">Solicitação:</label>
-                                        <select class="form-control select2" data-toggle="select2">
+                                        <select class="form-control select2" data-toggle="select2" name="solicitacao" id="solicitacao" onchange="sendFilter()">
                                             <option></option>
-                                            <option>Logo EFG EaD</option>
-                                            <option>Templates para abertura e fechamento de videoaulas EFG EaD</option>
-                                            <option>SAC redes sociais</option>
-                                            
+                                            {% for solicitacao in solicitacoes %}
+                                            <option value="{{solicitacao.id}}">{{solicitacao.titulo}}</option>
+                                            {% endfor %}
                                         </select>
                                     </div>
                                 </div>
@@ -108,38 +109,40 @@
                                 <div class="col-2">
                                     <div class="mb-3">
                                         <label for="simpleinput" class="form-label">Data da Solicitação:</label>
-                                        <input type="text" class="form-control" placeholder="Informe o vencimento" data-toggle="input-mask" data-mask-format="00/00/0000" maxlength="10">
+                                        <input type="text" class="form-control" placeholder="Informe o vencimento" name="data_solicitacao" id="data_solicitacao" data-toggle="input-mask" data-mask-format="00/00/0000" maxlength="10">
                                     </div>
                                 </div>
 
                                 <div class="col-2">
                                     <div class="mb-3">
                                         <label for="simpleinput" class="form-label">Setor:</label>
-                                        <select class="form-control select2" data-toggle="select2">
+                                        <select class="form-control select2" name="setor" id="setor" data-toggle="select2" onchange="sendFilter()">
                                             <option></option>
-                                            <option>COTEC</option>
-                                            <option>EFG</option>
-                                            <option>BASILEU</option>
-                                            <option>CETT</option>
+                                            <option value="2">COTEC</option>
+                                            <option value="1">EFG</option>
+                                            <option value="4">BASILEU</option>
+                                            <option value="3">CETT</option>
                                             
                                         </select>
                                     </div>
                                 </div>
-
+             
                                 <div class="col-3">
                                     <div class="mb-3">
                                         <label for="simpleinput" class="form-label">Status:</label>
-                                        <select class="form-control select2" data-toggle="select2">
+                                        <select class="form-control select2" name="status" id="status" data-toggle="select2" onchange="sendFilter()">
                                             <option></option>
-                                            <option>Aguardando Entregas</option>
-                                            <option>Cancelada</option>
-                                            <option>Concluído</option>
+                                            <option value="1">Em Análise</option>
+                                            <option value="2">Em Produção</option>
+                                            <option value="3">Concluída</option>
+                                            <option value="4">Devolvida</option>
+                                            <option value="5">Cancelada</option>
                                             
                                         </select>
                                     </div>
                                 </div>
                             </div>
-
+                                </form>
                                 <div class="table-responsive-sm">
                                     <table class="table table-centered mb-0">
                                         <thead class="table-dark">
@@ -154,8 +157,8 @@
                                          
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                        {% for solicitacao in solicitacoes %}
+                                        <tbody id="tbl_solicitacoes">
+                                        {% for solicitacao in paginas %}
     
                                             <tr style="cursor: pointer;"  onclick="acessarSolicitacao('{{solicitacao.id}}')">
                                                 <td>#{{solicitacao.id}}</td>
@@ -165,7 +168,7 @@
                                                 <td>{{solicitacao.get_projeto_display}}</td>
                                                 <td>
                                                     <div id="tooltip-container3">
-                                                        <img src="{% static 'layouts/assets/images/users/avatar-2.jpg' %}" alt="image" class="avatar-xs rounded-circle me-1" data-bs-container="#tooltip-container3" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Danilo Martins" data-bs-original-title="Danilo Martins">
+                                                        <img src="{% static 'layouts/assets/images/users/avatar-2.jpg' %}" alt="image" class="avatar-xs rounded-circle me-1" data-bs-container="#tooltip-container3" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="{{solicitacao.autor.first_name}}" data-bs-original-title="{{solicitacao.autor.first_name}}">
                                                     </div>
                                                 </td>
                                                 {% if solicitacao.status == 1 %}
@@ -179,10 +182,45 @@
                                                 {% endif %}
                                             </tr>
                                         {% endfor %}
-                                           
+                                        
                                       
                                         </tbody>
-                                    </table>
+                                    </table><br>
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination">
+                                          {% if paginas.has_previous %}
+                                          <li class="page-item">
+                                            <a class="page-link" href="?pagina=1">&laquo; Primeiro</a>
+                                          </li>
+                                            <li class="page-item">
+                                              
+                                              <a class="page-link" href="?pagina={{ paginas.previous_page_number }}">Anterior</a>
+                                            </li>
+                                          {% else %}
+                                            <li class="page-item disabled">
+                                              <a class="page-link" href="#" tabindex="-1" aria-disabled="True">Anterior</a>
+                                            </li>
+                                          {% endif %}
+                        
+                                              <li class="page-item active" aria-current="page">
+                                                <span class="page-link">{{ paginas.number }} de {{ paginas.paginator.num_pages }}</span>
+                                              </li>
+                                           
+                                          {% if paginas.has_next %}
+                                         
+                                            <li class="page-item">
+                                              <a class="page-link" href="?pagina={{ paginas.next_page_number }}">Próximo</a>
+                                            </li>
+                                            <li class="page-item">
+                                              <a class="page-link" href="?pagina={{ paginas.paginator.num_pages }}">Último &raquo;</a>
+                                            </li>
+                                          {% else %}
+                                            <li class="page-item disabled">
+                                              <a class="page-link" href="#" tabindex="-1" aria-disabled="True">Próximo</a>
+                                            </li>
+                                          {% endif %}
+                                        </ul>
+                                      </nav>
                                 </div>
                             </div> <!-- end card-body-->
                         </div> <!-- end card-->
@@ -217,6 +255,60 @@
 
 </div>
 <script>
+
+document.addEventListener("DOMContentLoaded", function() {
+        // Obtém o campo de data
+        const idSolicitacao = document.getElementById("idSolicitacao");
+        const dataSolicitacao = document.getElementById("data_solicitacao");
+
+        // Adiciona um ouvinte de evento ao campo de data para detectar mudanças
+        idSolicitacao.addEventListener("input", function() {
+            setTimeout(function() {
+                sendFilter();
+            }, 2000);
+        });
+
+        dataSolicitacao.addEventListener("input", function() {
+            setTimeout(function() {
+                sendFilter();
+            }, 2000);
+        });
+
+
+    });
+function sendFilter(){
+   
+      var form = document.getElementById("formFilters");
+      var formData = new FormData(form);
+      var url = '/filter-solicitacoes';
+      // Adiciona manualmente os valores dos campos do formulário ao objeto formData
+      // formData.append("campo_extra", "valor_extra");
+
+      // Converte o objeto formData em uma string no formato de consulta GET $("#resultados_concluidos").html(data);
+      var queryString = new URLSearchParams(formData).toString();
+
+      // Concatena a string de consulta GET à URL
+      url += "?" + queryString;
+
+      $.ajax({
+          url: url,
+          type: 'GET',
+          success: function(data) {
+              $("#tbl_solicitacoes").html(data);
+              
+          },
+          error: function(xhr, status, error) {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Ops!',
+                  text: 'Não foi possível obter resultados!'
+              });
+          }
+      });
+
+
+
+    }
     function acessarSolicitacao(solicitacaoId){
         window.location.href = "timeline";
     }

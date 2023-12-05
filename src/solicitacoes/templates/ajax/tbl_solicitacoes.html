@@ -1,0 +1,27 @@
+{% load static %}
+
+{% for solicitacao in paginas %}
+    
+<tr style="cursor: pointer;"  onclick="acessarSolicitacao('{{solicitacao.id}}')">
+    <td>#{{solicitacao.id}}</td>
+    <td>{{solicitacao.titulo}}</td>
+    <td>{{solicitacao.data_solicitacao|date:'d/m/Y'}}</td>
+    <td>{{solicitacao.prazo_entrega|date:'d/m/Y'}}</td>
+    <td>{{solicitacao.get_projeto_display}}</td>
+    <td>
+        <div id="tooltip-container3">
+            <img src="{% static 'layouts/assets/images/users/avatar-2.jpg' %}" alt="image" class="avatar-xs rounded-circle me-1" data-bs-container="#tooltip-container3" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Danilo Martins" data-bs-original-title="Danilo Martins">
+        </div>
+    </td>
+    {% if solicitacao.status == 1 %}
+    <td><span class="badge badge-outline-warning rounded-pill">{{solicitacao.get_status_display}}</span></td>
+    {% elif solicitacao.status == 2 %}
+    <td><span class="badge badge-outline-info rounded-pill">{{solicitacao.get_status_display}}</span></td>
+    {% elif solicitacao.status == 3 %}
+    <td><span class="badge badge-outline-success rounded-pill">{{solicitacao.get_status_display}}</span></td>
+    {% elif solicitacao.status == 4 or solicitacao.status == 5 %}
+    <td><span class="badge badge-outline-danger rounded-pill">{{solicitacao.get_status_display}}</span></td>
+    {% endif %}
+</tr>
+{% endfor %}
+
