@@ -12,6 +12,7 @@ class Perfil(models.Model):
     foto = models.TextField(null=False,blank=False)
     permissoes = models.TextField(null=False,blank=False)
 
-
+    def get_cargo_display(self):
+        return dict(self.choice_cargo)[self.cargo]
     class Meta:
         db_table = 'perfil'

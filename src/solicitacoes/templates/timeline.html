@@ -29,18 +29,18 @@
                             <h5 class="m-0 time-show-name">Final</h5>
                         </div>
 
-
-                        <div class="timeline-lg-item timeline-item-left">
+                        {% for item in itens %}
+                        <div class="timeline-lg-item {% if item.lado == 1 %}timeline-item-left{% else %}timeline-item-right{% endif %}">
                             <div class="timeline-desk">
                                 <div class="timeline-box">
-                                    <span class="arrow-alt"></span>
+                                    <span class="arrow{% if item.lado == 1 %}-alt{% else %}{% endif %}"></span>
                                     <span class="timeline-icon bg-warning-subtle"><i class="ri-record-circle-fill text-warning"></i></span>
-                                    <h4 class="mt-0 mb-1 fs-16">Logo EFG EaD</h4>
-                                    <p class="text-muted"><small>14/11/2023 ás 17:00</small></p>
-                                    <p>Hérica finalizou a demanda </p>
+                                    <h4 class="mt-0 mb-1 fs-16">{{ item.solicitacao.titulo}}</h4>
+                                    <p class="text-muted"><small>{{ item.data|date:"d/m/Y H:i"}}</small></p>
+                                    <p>{{ item.descricao}}</p>
                                     <div>
                                         <h5 class="mt-1 fs-14 mb-0">
-                                            <img src="{% static 'layouts/assets/images/users/avatar-3.jpg' %}" alt="Arya S" class="rounded-circle me-2" height="24"> Hérica <small>- Cordenador COTEC</small>
+                                            <img src="{% static 'layouts/assets/images/users/avatar-3.jpg' %}" alt="Arya S" class="rounded-circle me-2" height="24"> {{item.autor.first_name}} - <small class="badge badge-outline-warning">{{item.cargo}}</small>
                                         </h5>
                                     </div>
 
@@ -48,7 +48,8 @@
                                 </div>
                             </div>
                         </div>
-
+                        {% endfor %}
+<!--                         
                         <div class="timeline-lg-item timeline-item-right">
                             <div class="timeline-desk">
                                 <div class="timeline-box">
@@ -122,7 +123,7 @@
 
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="timeline-show mb-3 text-center">
                             <h5 class="m-0 time-show-name">Início</h5>
                         </div>

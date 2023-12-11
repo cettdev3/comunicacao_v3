@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
-
+from perfil.models import Perfil
 # Create your models here.
 class Solicitacoes(models.Model):
     choice_projeto = [(1,'EFG'),(2,'COTEC'),(3,'CETT'),(4,'BASILEU')]
@@ -48,3 +48,20 @@ class Demandas(models.Model):
 
     class Meta:
         db_table = 'demandas'
+
+
+class Timeline(models.Model):
+    id = models.AutoField(primary_key=True)
+    autor = models.ForeignKey(User,on_delete=models.CASCADE)
+    descricao = models.TextField(null=True, blank=True)
+    data = models.DateTimeField(default=timezone.now, null=True, blank=True)
+    solicitacao = models.ForeignKey(Solicitacoes,on_delete=models.CASCADE)
+    lado = models.IntegerField(null=True, blank=True)
+
+    @property
+    def cargo(self):
+        meu_cargo = Perfil.objects.filter(user_profile=self.autor).first()
+        return meu_cargo.get_cargo_display()
+    
+    class Meta:
+        db_table = 'timeline'

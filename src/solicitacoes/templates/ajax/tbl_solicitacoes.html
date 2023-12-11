@@ -1,3 +1,4 @@
+
 {% load static %}
 
 {% for solicitacao in paginas %}
@@ -10,7 +11,7 @@
     <td>{{solicitacao.get_projeto_display}}</td>
     <td>
         <div id="tooltip-container3">
-            <img src="{% static 'layouts/assets/images/users/avatar-2.jpg' %}" alt="image" class="avatar-xs rounded-circle me-1" data-bs-container="#tooltip-container3" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="Danilo Martins" data-bs-original-title="Danilo Martins">
+            <img src="{% static 'layouts/assets/images/users/avatar-2.jpg' %}" alt="image" class="avatar-xs rounded-circle me-1" > {{solicitacao.autor.first_name}}
         </div>
     </td>
     {% if solicitacao.status == 1 %}

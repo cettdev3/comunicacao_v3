@@ -1,6 +1,17 @@
 {% extends 'menu.html' %}
 {% load static %}
+<style>
+.file-icon {
+    font-size: 24px;
+    margin-right: 10px;
+}
+
+.remove-button {
+   
+}
+</style>
 {% block content %}
+
 <div class="content-page">
     <div class="content">
 
@@ -27,31 +38,31 @@
                   
                     <div class="card">
                         <ul class="list-group list-group-flush">
-                            
+
+                            <form id="form_solicitacao" method="POST"  enctype="multipart/form-data">
                             <li class="list-group-item">
                                 <div class="row">
                                 <div class="col-4">
                                     <div class="mb-3">
-                                        <label for="simpleinput" class="form-label">Título: </label>
-                                        <input type="text" id="simpleinput" class="form-control">
+                                        <label for="titulo" class="form-label">Título: </label>
+                                        <input type="text" id="titulo" name="titulo" class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="mb-3">
-                                        <label for="simpleinput" class="form-label">Prazo de Entrega: </label>
-                                        <input type="text" class="form-control" placeholder="Informe o vencimento" data-toggle="input-mask" data-mask-format="00/00/0000" maxlength="10">
+                                        <label for="prazo_entrega" class="form-label">Prazo de Entrega: </label>
+                                        <input type="text" class="form-control" id="prazo_entrega" name="prazo_entrega" placeholder="Informe o vencimento" data-toggle="input-mask" data-mask-format="00/00/0000" maxlength="10">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="mb-3">
                                         <label for="simpleinput" class="form-label">Informe o Destino</label>
-                                        <select class="form-control select2" data-toggle="select2">
-                                            {% for solicitacao in solicitacoes %}
-                                            <option>COTEC</option>
-                                            <option>EFG</option>
-                                            <option>BASILEU</option>
-                                            <option>CETT</option>
-                                            {% endfor %}
+                                        <select class="form-control select2" data-toggle="select2" name="destino" id="destino">
+                                            <option value="2">COTEC</option>
+                                            <option value="1">EFG</option>
+                                            <option value="4">BASILEU</option>
+                                            <option value="3" selected>CETT</option>
+                     
                                         </select>
                                     </div>
                                 </div>
@@ -60,25 +71,29 @@
                                         <div class="card-body">
                                             <h5 class="card-title text-success">Briefing</h5>
                                             <div class="mb-2">
-                                  
-                                                <div id="snow-editor" style="height: 300px;">
-                                                   
-                                                </div><!-- end Snow-editor-->
+                                                <textarea id="summernote" name="editordata"></textarea>
+                                                
                                             </div>
                                         </div> <!-- end card-body-->
                                     </div>
                                 </div>
                                 <div class="col-2">
-                                    <button style="width: 100%;" type="button" class="btn btn-info"><i class="ri-upload-cloud-line me-1"></i> <span>Anexar Arquivos</span> </button>
+                                    <label for="fileInput" class="btn btn-info">
+                                        <i class="ri-upload-cloud-line me-1"></i> Anexar Arquivos
+                                      </label>
+                                   
                                 </div> 
-                                <div class="col-8"></div>
+                                <div class="col-8">  
+                                    <input style="width: 100%;" type="file" id="fileInput" class="d-none" multiple onchange="showSelectedFiles()">
+                                    <div class="row" id="fileDisplay"></div>
+                                </div>
                                 <div class="col-2">
-                                    <button style="width: 100%;" type="button" class="btn btn-info"><i class="ri-rocket-line me-1"></i> <span>Realizar Solicitação</span> </button>
+                                    <button onclick="RealizaSolicitacao()" style="width: 100%;" type="button" class="btn btn-info"><i class="ri-rocket-line me-1"></i> <span>Realizar Solicitação</span> </button>
                                 </div>
                             </div>
                             </li>
 
-                        
+                            </form>
                         </ul> <!-- end list-->
                     </div> <!-- end card-->
 
@@ -168,7 +183,7 @@
                                                 <td>{{solicitacao.get_projeto_display}}</td>
                                                 <td>
                                                     <div id="tooltip-container3">
-                                                        <img src="{% static 'layouts/assets/images/users/avatar-2.jpg' %}" alt="image" class="avatar-xs rounded-circle me-1" data-bs-container="#tooltip-container3" data-bs-toggle="tooltip" data-bs-placement="bottom" aria-label="{{solicitacao.autor.first_name}}" data-bs-original-title="{{solicitacao.autor.first_name}}">
+                                                        <img src="{% static 'layouts/assets/images/users/avatar-2.jpg' %}" alt="image" class="avatar-xs rounded-circle me-1"  > {{solicitacao.autor.first_name}}
                                                     </div>
                                                 </td>
                                                 {% if solicitacao.status == 1 %}
@@ -254,7 +269,133 @@
     <!-- end Footer -->
 
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
+
+function RealizaSolicitacao(){
+    var form = document.getElementById("form_solicitacao");
+    var formData = new FormData(form);  // Use FormData para incluir campos de arquivo]
+
+    var fileInput = document.getElementById('fileInput');
+    
+    if (fileInput){
+      for (var i = 0; i < fileInput.files.length; i++) {
+        console.log(fileInput.files[i])
+        formData.append('files[]', fileInput.files[i]);
+    }
+    }
+
+    console.log(formData)
+    Swal.fire({
+        title: 'Realizar Solicitação?',
+        text: 'Deseja realmente realizar esta solicitação? Caso realize não poderá alterar até que a solicitação seja devolvida',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Não'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var XCSRFToken = '{{ csrf_token }}';
+            const url = "/realizar-solicitacao";
+            
+            // Use a função $.ajax do jQuery para fazer a solicitação AJAX
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: formData,
+                headers: { "X-CSRFToken": XCSRFToken },
+                processData: false,  // Não processar os dados (o FormData já cuida disso)
+                contentType: false,  // Não definir o tipo de conteúdo (o FormData já cuida disso)
+                success: function (data) {
+                  $("#tbl_solicitacoes").html(data);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Solicitação Realizada!',
+                        text: "A solicitação foi realizada com sucesso!"
+                    }).then((result) => {
+                        // Ação a ser realizada após o botão "OK" ser clicado
+                        if (result.isConfirmed) {
+                           
+                           
+                        }
+                    });
+                },
+                error: function (data) {
+                    console.log(data)
+                    if (data.responseJSON && data.responseJSON.error_message) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ops!',
+                            text: data.responseJSON.error_message
+                        });
+                    }
+                }
+            });
+        }
+    });
+}
+
+$(document).ready(function() {
+  $('#summernote').summernote(
+    {
+  toolbar: [
+    ['style', ['bold', 'italic', 'underline', 'clear']],
+    ['font', ['strikethrough', 'superscript', 'subscript']],
+    ['para', ['ul', 'ol']],
+
+    // Outras opções de toolbar que você deseja incluir, mas sem 'link'
+  ],
+  // Outras configurações necessárias para o seu uso
+}
+  );
+});
+
+function showSelectedFiles() {
+            const fileInput = document.getElementById('fileInput');
+            const fileDisplay = document.getElementById('fileDisplay');
+
+            // Limpa a exibição de arquivos anteriores
+            fileDisplay.innerHTML = "";
+
+            const files = fileInput.files;
+            for (let i = 0; i < files.length; i++) {
+                const fileName = files[i].name;
+                const listItem = document.createElement('div');
+                listItem.className = "col-auto";
+                listItem.innerHTML = `
+                    <i class="file-icon ri-upload-cloud-line me-1"></i>
+                    <span style="font-size: 16px;">${fileName}</span>
+                    <i class="remove-button ri-indeterminate-circle-fill" onclick="removeFile(${i})" style="cursor: pointer; color: red; font-size: 20px;"	></i>
+                `;
+                fileDisplay.appendChild(listItem);
+            }
+        }
+
+function removeFile(index) {
+    const fileInput = document.getElementById('fileInput');
+    const files = Array.from(fileInput.files);
+    files.splice(index, 1);
+
+    // Cria um novo input de arquivo e copia os arquivos restantes
+    const newFileInput = document.createElement('input');
+    newFileInput.type = 'file';
+    newFileInput.id = 'fileInput';
+    newFileInput.multiple = true;
+    newFileInput.style.display = 'none';
+    newFileInput.addEventListener('change', showSelectedFiles);
+
+    const dataTransfer = new DataTransfer();
+    files.forEach(file => dataTransfer.items.add(file));
+    newFileInput.files = dataTransfer.files;
+
+    // Substitui o input de arquivo anterior
+    fileInput.parentNode.replaceChild(newFileInput, fileInput);
+
+    // Atualize a lista de arquivos selecionados
+    showSelectedFiles();
+}
 
 document.addEventListener("DOMContentLoaded", function() {
         // Obtém o campo de data
@@ -276,6 +417,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     });
+
 function sendFilter(){
    
       var form = document.getElementById("formFilters");
@@ -309,9 +451,11 @@ function sendFilter(){
 
 
     }
-    function acessarSolicitacao(solicitacaoId){
-        window.location.href = "timeline";
+
+function acessarSolicitacao(solicitacaoId){
+        window.location.href = "/timeline/" + solicitacaoId;
     }
+
 
 </script>
 {% endblock %}
