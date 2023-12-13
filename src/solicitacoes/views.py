@@ -1,10 +1,16 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .models import Solicitacoes, Timeline
+from .models import Solicitacoes, Timeline, Demandas, Pecas
+from perfil.models import Perfil
 from django.core.paginator import Paginator
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from .utils import *
+
+def gera_demandas(solicitacao_id,designante,autor,prioridade):
+    peca = Pecas.objects.create(solicitacao_id=solicitacao_id,titulo='Designar Demandas')
+    demandas = Demandas.objects.create(designante_id=designante,autor_id=autor.id,prioridade=prioridade,peca_id=peca.id,status=1)
+    return demandas
 
 def convert_data_formatada(data):
 
@@ -65,6 +71,7 @@ def Realizar_Solicitacao(request):
     prazo_entrega = convert_data_formatada(prazo_entrega)
     destino = request.POST.get('destino','')
     briefing = request.POST.get('editordata','')
+    prioridade = request.POST.get('prioridade','')
     try:
         arquivos_solicitacao = []
         arquivos = request.FILES.getlist('files[]')
@@ -119,6 +126,10 @@ def Realizar_Solicitacao(request):
     solicitacoes_paginators = Paginator(solicitacoes,50)
     page_num = request.GET.get('pagina')
     page = solicitacoes_paginators.get_page(page_num)
+
+    perfil = Perfil.objects.filter(und=destino).first()
+    print(perfil.id)
+    gera_demanda = gera_demandas(solicitar.id,perfil.id,request.user,prioridade=prioridade)
 
     return render(request,'ajax/tbl_solicitacoes.html',{'paginas':page})
 

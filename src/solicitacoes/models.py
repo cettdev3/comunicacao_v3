@@ -3,10 +3,11 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from perfil.models import Perfil
 # Create your models here.
+
+
 class Solicitacoes(models.Model):
     choice_projeto = [(1,'EFG'),(2,'COTEC'),(3,'CETT'),(4,'BASILEU')]
     choices_status = [(1,'EM ANÁLISE'),(2,'EM PRODUÇÃO'),(3,'CONCLUÍDA'),(4,'DEVOLVIDA'),(5,'CANCELADA')]
-
     id = models.AutoField(primary_key=True)
     titulo = models.TextField(null=False,blank=False)
     motivo_devolucao = models.TextField(null=True,blank=True)
@@ -17,6 +18,12 @@ class Solicitacoes(models.Model):
     briefing = models.TextField(null=False,blank=False)
     status = models.IntegerField(choices=choices_status,null=False,blank=False)
 
+    @property
+    def count_demandas(self):
+        pecas = Pecas.objects.filter(solicitacao=self)
+        demandas = Demandas.objects.filter(peca__in=pecas).count()
+        return demandas
+    
     def get_status_display(self):
         return dict(self.choices_status)[self.status]
 
@@ -39,12 +46,15 @@ class Pecas(models.Model):
 
 class Demandas(models.Model):
     choice_status = [(1,'A Fazer'),(2,'Em Progresso'),(3,'Em Revisão'),(4,'Concluído')]
+    choice_prioridade = [(1,'Normal'),(2,'Urgente')]
     id = models.AutoField(primary_key=True)
-    peca = models.ForeignKey(Pecas,on_delete=models.CASCADE)
+    peca = models.ForeignKey(Pecas,on_delete=models.CASCADE,null=False,blank=False)
     designante = models.ForeignKey(User,on_delete=models.CASCADE)
     autor = models.ForeignKey(User, related_name='designante',on_delete=models.CASCADE)
     data_designacao = models.DateField(default=timezone.now, null=True, blank=True)
+    prioridade = models.IntegerField(choices=choice_prioridade,null=False,blank=False,default=1)
     status = models.IntegerField(choices=choice_status,null=False,blank=False)
+
 
     class Meta:
         db_table = 'demandas'
