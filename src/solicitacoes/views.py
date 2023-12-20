@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Solicitacoes, Timeline, Demandas, Pecas
+from repositorio.models import Arquivos_Solicitacoes
 from perfil.models import Perfil
 from django.core.paginator import Paginator
 from django.core.files.storage import FileSystemStorage
@@ -72,16 +73,7 @@ def Realizar_Solicitacao(request):
     destino = request.POST.get('destino','')
     briefing = request.POST.get('editordata','')
     prioridade = request.POST.get('prioridade','')
-    try:
-        arquivos_solicitacao = []
-        arquivos = request.FILES.getlist('files[]')
-        for arquivo in arquivos:
-            fs1 = FileSystemStorage()
-            filename1 = fs1.save(arquivo.name, arquivo)
-            arquivo_url = fs1.url(filename1)
-            arquivos_solicitacao.append(arquivo_url)
-    except:
-        arquivo_url = []
+    
     
     if titulo:
         pass
@@ -128,9 +120,19 @@ def Realizar_Solicitacao(request):
     page = solicitacoes_paginators.get_page(page_num)
 
     perfil = Perfil.objects.filter(und=destino).first()
-    print(perfil.id)
+
     gera_demanda = gera_demandas(solicitar.id,perfil.id,request.user,prioridade=prioridade)
 
+    try:
+        arquivos = request.FILES.getlist('files[]')
+        for arquivo in arquivos:
+            fs1 = FileSystemStorage()
+            filename1 = fs1.save(arquivo.name, arquivo)
+            arquivo_url = fs1.url(filename1)
+            arquivos = Arquivos_Solicitacoes.objects.create(rota = arquivo_url,autor_id = request.user.id, solicitacao_id = solicitar.id)
+
+    except:
+        pass
     return render(request,'ajax/tbl_solicitacoes.html',{'paginas':page})
 
 @login_required(login_url='/')

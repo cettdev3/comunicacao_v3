@@ -8,6 +8,7 @@ from perfil.models import Perfil
 class Solicitacoes(models.Model):
     choice_projeto = [(1,'EFG'),(2,'COTEC'),(3,'CETT'),(4,'BASILEU')]
     choices_status = [(1,'EM ANÁLISE'),(2,'EM PRODUÇÃO'),(3,'CONCLUÍDA'),(4,'DEVOLVIDA'),(5,'CANCELADA')]
+    choice_prioridade = [(1,'Normal'),(2,'Urgente')]
     id = models.AutoField(primary_key=True)
     titulo = models.TextField(null=False,blank=False)
     motivo_devolucao = models.TextField(null=True,blank=True)
@@ -16,6 +17,7 @@ class Solicitacoes(models.Model):
     data_solicitacao = models.DateTimeField(default=timezone.now,null=False,blank=False)
     prazo_entrega = models.DateField(null=False,blank=False)
     briefing = models.TextField(null=False,blank=False)
+    prioridade = models.IntegerField(choices=choice_prioridade,null=False,blank=False,default=1)
     status = models.IntegerField(choices=choices_status,null=False,blank=False)
 
     @property
@@ -23,6 +25,9 @@ class Solicitacoes(models.Model):
         pecas = Pecas.objects.filter(solicitacao=self)
         demandas = Demandas.objects.filter(peca__in=pecas).count()
         return demandas
+    
+    def get_prioridade_display(self):
+        return dict(self.choice_prioridade)[self.prioridade]
     
     def get_status_display(self):
         return dict(self.choices_status)[self.status]
@@ -45,17 +50,21 @@ class Pecas(models.Model):
 
 
 class Demandas(models.Model):
-    choice_status = [(1,'A Fazer'),(2,'Em Progresso'),(3,'Em Revisão'),(4,'Concluído')]
+    choice_status = [(1,'A Fazer'),(2,'Em Progresso'),(3,'Em Revisão'),(4,'Em Análise'),(5,'Concluído')]
     choice_prioridade = [(1,'Normal'),(2,'Urgente')]
     id = models.AutoField(primary_key=True)
     peca = models.ForeignKey(Pecas,on_delete=models.CASCADE,null=False,blank=False)
     designante = models.ForeignKey(User,on_delete=models.CASCADE)
     autor = models.ForeignKey(User, related_name='designante',on_delete=models.CASCADE)
-    data_designacao = models.DateField(default=timezone.now, null=True, blank=True)
+    data_designacao = models.DateField(default=timezone.now, null=True, blank=True) 
     prioridade = models.IntegerField(choices=choice_prioridade,null=False,blank=False,default=1)
+    descricao_entrega = models.TextField(null=False,blank=False,default="Nenhuma Descrição de Entrega")
+    devolutiva = models.TextField(null=False,blank=False,default="")
     status = models.IntegerField(choices=choice_status,null=False,blank=False)
 
-
+    def get_status_display(self):
+        return dict(self.choice_status)[self.status]
+    
     class Meta:
         db_table = 'demandas'
 
