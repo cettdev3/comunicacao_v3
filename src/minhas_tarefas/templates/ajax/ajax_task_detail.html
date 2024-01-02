@@ -132,7 +132,7 @@
                                         </div>
                                         <div class="col-3">
                                             <div class="mb-3">
-                                                <button style="width: 100%;" type="button" class="btn btn-warning"><i class="ri-add-circle-line me-1"></i> <span>Cadastrar</span> </button>
+                                                <button style="width: 100%;" type="button" onclick="cadastrarPeca('{{solicitacao.id}}')" class="btn btn-warning"><i class="ri-add-circle-line me-1"></i> <span>Cadastrar</span> </button>
                                             </div>
                                         </div>
                                         <div class="col-12">
@@ -146,9 +146,11 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody id="tbl_pecas">
-                                                        {% for peca in solicitacao.pecas %}
-                                                        <td>{{peca.id}}</td>
-                                                        <td>{{peca.titulo}}</td>
+                                                        {% for peca in solicitacao.todas_pecas %}
+                                                        <tr>
+                                                            <td>{{peca.id}}</td>
+                                                            <td>{{peca.titulo}}</td>
+                                                        </tr>
                                                         {% endfor %}
                                                     </tbody>
                                                 </table>
@@ -158,25 +160,40 @@
                                 </div>
                                 <div class="tab-pane" id="settings1">
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div class="col-4">
                                             <div class="mb-3">
                                                 
-                                                <select id="select2_peca" class="js-example-basic-single" name="state">
-                     
-                                                    <option>Logo EFG</option>
-                                                    <option>Arte Gráfica</option>
+                                                <select id="select2_peca_design" class="js-example-basic-single" name="peca">
+                                                    {% for peca in solicitacao.todas_pecas  %}
+                                                        {% if peca.titulo != "Designar Demandas" %}
+                                                        <option value="{{peca.id}}">{{peca.titulo}}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
                                                   </select>
                                                
                                             </div>
                                         </div>
 
-                                        <div class="col-6">
+                                        <div class="col-4">
                                             <div class="mb-3">
                                                 
-                                                <select id="select2_usuario" class="js-example-basic-single" name="state">
-                    
-                                                    <option>Janaína</option>
-                                                    <option>Hérica</option>
+                                                <select id="select2_usuario" class="js-example-basic-single" name="usuario">
+                                                    {% for usuario in solicitacao.usuarios %}
+                                                        <option value="{{usuario.id}}">{{usuario.first_name}}</option>
+                                                    {% endfor %}
+                                                  </select>
+                                               
+                                            </div>
+                                        </div>
+
+                                        <div class="col-4">
+                                            <div class="mb-3">
+                                                
+                                                <select id="select2_prioridade" class="js-example-basic-single" name="prioridade">
+                                                   
+                                                        <option value="1">Normal</option>
+                                                        <option value="2">Urgente</option>
+                                                   
                                                   </select>
                                                
                                             </div>
@@ -191,7 +208,7 @@
                                         <div class="col-12">
                                             <div class="mb-3">
                                                 <div class="table-responsive-sm">
-                                                    <table class="table table-bordered table-centered mb-0">
+                                                    <table class="table table-centered mb-0">
                                                         <thead>
                                                             <tr>
                                                                 <th>Usuário Designado</th>
@@ -199,56 +216,42 @@
                                                                 <th>Peça</th>
                                                                 <th>Status</th>
                                                                 <th>Ação</th>
-                                                              
                                                             </tr>
                                                         </thead>
-                                                        <tbody>
-                                                            <tr>
-                                                                <td class="table-user">
-                                                                    <img src="{% static 'layouts/assets/images/users/avatar-6.jpg' %}" alt="table-user" class="me-2 rounded-circle" />
-                                                                    Janaína
-                                                                </td>
-                                                                <td>17/11/2023</td>
-                                                                <td>Logo EFG</td>
-                                                                <td><span class="badge badge-outline-warning rounded-pill">Não Iniciou</span></td>
-                                                                <td><button style="width: 100%;" type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#bs-example-modal-lg"><i class="ri-eye-line me-1"></i> <span>Visualizar</span> </button></td>
-                                                              
-                                                            </tr>
-                                                            <tr>
-                                                                <td class="table-user">
-                                                                    <img src="{% static 'layouts/assets/images/users/avatar-7.jpg' %}" alt="table-user" class="me-2 rounded-circle" />
-                                                                    Hérica
-                                                                </td>
-                                                                <td>17/11/2023</td>
-                                                                <td>Arte Gráfica</td>
-                                                                <td><span class="badge badge-outline-warning rounded-pill">Não Iniciou</span></td>
-                                                                <td><button style="width: 100%;" type="button" class="btn btn-info"><i class="ri-eye-line me-1"></i> <span>Visualizar</span> </button></td>
-                                                                
-                                                            </tr>
-                                                            <tr>
-                                                                <td class="table-user">
-                                                                    <img src="{% static 'layouts/assets/images/users/avatar-8.jpg' %}" alt="table-user" class="me-2 rounded-circle" />
-                                                                    Marina
-                                                                </td>
-                                                                <td>17/11/2023</td>
-                                                                <td>Logo EFG</td>
-                                                                <td><span class="badge badge-outline-warning rounded-pill">Não Iniciou</span></td>
-                                                                <td><button style="width: 100%;" type="button" class="btn btn-info"><i class="ri-eye-line me-1"></i> <span>Visualizar</span> </button></td>
-                                                               
-                                                            </tr>
-                                                            <tr>
-                                                                <td class="table-user">
-                                                                    <img src="{% static 'layouts/assets/images/users/avatar-9.jpg' %}" alt="table-user" class="me-2 rounded-circle" />
-                                                                    Raquel
-                                                                </td>
-                                                                <td>17/11/2023</td>
-                                                                <td>Arte Gráfica</td>
-                                                                <td><span class="badge badge-outline-warning rounded-pill">Não Iniciou</span></td>
-                                                                <td><button style="width: 100%;" type="button" class="btn btn-info"><i class="ri-eye-line me-1"></i> <span>Visualizar</span> </button></td>
-                                                               
-                                                            </tr>
+                                                        <tbody id="tbl_designacoes">
+                                                            {% for peca in solicitacao.todas_pecas %}
+                                                                {% for demanda in peca.demandas_relacionadas.all %}
+                                                                    <tr>
+                                                                        <td class="table-user">
+                                                                            <img src="{% static 'layouts/assets/images/users/avatar-6.jpg' %}" alt="table-user" class="me-2 rounded-circle" />
+                                                                            {{ demanda.designante.first_name }}
+                                                                        </td>
+                                                                        <td>17/11/2023</td>
+                                                                        <td>{{ peca.titulo }} </td>
+                                                                       
+                                                                        {% if demanda.status == 1 %}
+                                                                            <td><span class="badge badge-outline-warning rounded-pill">{{demanda.get_status_display}}</span></td>
+                                                                            {% elif demanda.status == 2 %}
+                                                                            <td><span class="badge badge-outline-info rounded-pill">{{demanda.get_status_display}}</span></td>
+                                                                            {% elif demanda.status == 3 %}
+                                                                            <td><span class="badge badge-outline-danger rounded-pill">{{demanda.get_status_display}}</span></td>
+                                                                            {% elif demanda.status == 4 %}
+                                                                            <td><span class="badge badge-outline-primary rounded-pill">{{demanda.get_status_display}}</span></td>
+                                                                            {% elif demanda.status == 5 %}
+                                                                            <td><span class="badge badge-outline-success rounded-pill">{{demanda.get_status_display}}</span></td>
+                                                                            {% endif %}
+                                                     
+                                                                        <td>
+                                                                            <button style="width: 100%;" type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#bs-example-modal-lg">
+                                                                                <i class="ri-eye-line me-1"></i> <span>Visualizar</span>
+                                                                            </button>
+                                                                        </td>
+                                                                    </tr>
+                                                                {% endfor %}
+                                                            {% endfor %}
                                                         </tbody>
                                                     </table>
+                                                    
                                                 </div> 
                                             </div>
                                         </div>
@@ -406,7 +409,60 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 
-function cadastrarPeca(){
+function designarPessoa(solicitacaoId){
+    var XCSRFToken = '{{ csrf_token }}';
+    Swal.fire({
+        title: 'Designar Usuário',
+        text: 'Deseja realmente designar este usuário a esta peça? ',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Não'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const url = "/ajax/designar-usuario";
+
+            var peca = document.getElementById('select2_peca_design').value;
+            var usuario = document.getElementById('select2_usuario)').value;
+            // Use a função $.ajax do jQuery para fazer a solicitação AJAX
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {'solicitacao_id':solicitacaoId,'peca':peca,'usuario_id':usuario},
+                headers: { "X-CSRFToken": XCSRFToken },
+                success: function (data) {
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Peça Cadastrada!',
+                        text: "Peça cadastrada com sucesso!",
+                    }).then((result) => {
+                        // Ação a ser realizada após o botão "OK" ser clicado
+                        if (result.isConfirmed) {
+                            $("#tbl_pecas").html(data);
+                            peca = ""
+                           
+                        }
+                    });
+                },
+                error: function (data) {
+                    console.log(data)
+                    if (data.responseJSON && data.responseJSON.error_message) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ops!',
+                            text: data.responseJSON.error_message
+                        });
+                    }
+                }
+            });
+        }
+    });
+}
+
+function cadastrarPeca(solicitacaoId){
     var XCSRFToken = '{{ csrf_token }}';
     Swal.fire({
         title: 'Cadastrar Peça',
@@ -421,18 +477,16 @@ function cadastrarPeca(){
         if (result.isConfirmed) {
             const url = "/ajax/cadastrar-peca";
 
-            var peca = document.getElementById('cadpecas');
-            
+            var peca = document.getElementById('cadpecas').value;
+            console.log(peca)
             // Use a função $.ajax do jQuery para fazer a solicitação AJAX
             $.ajax({
                 url: url,
                 type: "POST",
-                data: formData,
+                data: {'solicitacao_id':solicitacaoId,'peca':peca},
                 headers: { "X-CSRFToken": XCSRFToken },
-                processData: false,  // Não processar os dados (o FormData já cuida disso)
-                contentType: false,  // Não definir o tipo de conteúdo (o FormData já cuida disso)
                 success: function (data) {
-                    $("#tbl_pecas").html(data);
+                    
                     Swal.fire({
                         icon: 'success',
                         title: 'Peça Cadastrada!',
@@ -440,7 +494,8 @@ function cadastrarPeca(){
                     }).then((result) => {
                         // Ação a ser realizada após o botão "OK" ser clicado
                         if (result.isConfirmed) {
-                            
+                            $("#tbl_pecas").html(data);
+                            peca = ""
                            
                         }
                     });
@@ -526,10 +581,14 @@ function concluirDemanda(demandaId,formulario,files){
 
 
 $(document).ready(function() {
-  $("#select2_peca").select2({
+
+  $("#select2_peca_design").select2({
     dropdownParent: $("#task-detail-modal")
   });
   $("#select2_usuario").select2({
+    dropdownParent: $("#task-detail-modal")
+  });
+  $("#select2_prioridade").select2({
     dropdownParent: $("#task-detail-modal")
   });
 

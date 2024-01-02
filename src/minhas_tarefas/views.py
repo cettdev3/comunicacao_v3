@@ -7,6 +7,8 @@ from django.http import JsonResponse
 from django.db import transaction
 from perfil.models import Perfil
 from solicitacoes.utils import *
+from django.contrib.auth.models import User
+
 @login_required(login_url='/')
 def Minhas_Tarefas(request):
     solicitacoes = Solicitacoes.objects.filter(pecas__demandas__designante=request.user).distinct()
@@ -30,15 +32,24 @@ def Minhas_Tarefas(request):
 def Show_Modal_Task(request):
     req_solicitacao = request.GET.get('solicitacao_id','')
     solicitacao = Solicitacoes.objects.filter(id=req_solicitacao).first()
-    
+    usuarios = User.objects.all()
     pecas = Pecas.objects.filter(solicitacao=solicitacao, demandas__designante=request.user).distinct()
+    all_pecas = Pecas.objects.filter(solicitacao_id = solicitacao.id).all()
+
     for peca in pecas:
         demandas_relacionadas = Demandas.objects.filter(peca_id=peca.id).first()
         peca.demanda_relacionada = demandas_relacionadas
         arquivos_demandas = Arquivos_Demandas.objects.filter(demanda=demandas_relacionadas)
         peca.arquivos_relacionados = arquivos_demandas
-        
+    
+    for peca in all_pecas:
+        demandas_relacionadas = Demandas.objects.filter(peca=peca)
+        peca.demandas_relacionadas = demandas_relacionadas
+
     solicitacao.pecas = pecas
+    solicitacao.todas_pecas = all_pecas
+    solicitacao.usuarios = usuarios
+
 
     return render(request,'ajax/ajax_task_detail.html',{'solicitacao':solicitacao})
 
@@ -89,4 +100,24 @@ def Concluir_Demanda(request):
 
 @login_required(login_url='/')
 def Cadastrar_Peca(request):
-    
+    print(request.POST)
+    solicitacaoId = request.POST.get('solicitacao_id','')
+    peca = request.POST.get('peca','')
+
+    peca = Pecas.objects.create(titulo=peca,solicitacao_id = solicitacaoId)
+    todas_pecas = Pecas.objects.filter(solicitacao_id = solicitacaoId).all()
+    return render(request,'ajax/ajax_tbl_pecas.html',{'pecas':todas_pecas})
+
+def Designar_Usuário(request):
+    solicitacao = request.POST.get('solicitacao_id','')
+    peca = request.POST.get('peca','')
+    usuario = request.POST.get('usuario_id','')
+    # peca
+    # designante
+    # autor
+    # data_designacao
+    # prioridade
+    # descricao_entrega
+    # devolutiva
+    # status
+    demanda = Demandas.objects.create(peca_id = peca,designante_id = usuario,autor_id = request.user.id)
