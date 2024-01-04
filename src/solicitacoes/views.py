@@ -7,6 +7,16 @@ from django.core.paginator import Paginator
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from .utils import *
+from django.db import transaction
+def timeline(solicitacao,autorId,descricao):
+    lado_timeline = get_lado_timeline(solicitacao.id)
+    timeline = Timeline.objects.create(
+        autor_id = autorId,
+        solicitacao_id = solicitacao.id,
+        descricao = descricao,
+        lado = lado_timeline
+
+    )
 
 def gera_demandas(solicitacao_id,designante,autor,prioridade):
     peca = Pecas.objects.create(solicitacao_id=solicitacao_id,titulo='Designar Demandas')
@@ -65,75 +75,79 @@ def Filter_Solicitacoes(request):
     return render(request,'ajax/tbl_solicitacoes.html',{'paginas':page})
 
 def Realizar_Solicitacao(request):
-    print(request.POST)
-    arquivos = request.FILES.getlist('files[]')
-    titulo = request.POST.get('titulo','')
-    prazo_entrega = request.POST.get('prazo_entrega','')
-    prazo_entrega = convert_data_formatada(prazo_entrega)
-    destino = request.POST.get('destino','')
-    briefing = request.POST.get('editordata','')
-    prioridade = request.POST.get('prioridade','')
-    
-    
-    if titulo:
-        pass
-    else:
-        return JsonResponse({"error":True,"error_message": "Ops! Algo deu errado. Verifique se o título foi preenchido."}, status=400)
-    
-    if prazo_entrega:
-        pass
-    else:
-        return JsonResponse({"error":True,"error_message": "Ops! Algo deu errado. Verifique se o prazo de entrega foi preenchido."}, status=400)
-    
-    if destino:
-        pass
-    else:
-        return JsonResponse({"error":True,"error_message": "Ops! Algo deu errado. Verifique se o destino foi preenchido."}, status=400)
-
-
-    if briefing:
-        pass
-    else:
-        return JsonResponse({"error":True,"error_message": "Ops! Algo deu errado. Verifique se o briefing foi preenchido."}, status=400)
-    
-    solicitar = Solicitacoes.objects.create(
-        titulo = titulo,
-        prazo_entrega = prazo_entrega,
-        tipo_projeto = destino,
-        briefing = briefing,
-        autor = request.user,
-        status = 1
-
-    )
-
-    lado = get_lado_timeline(solicitar.id)
-    timeline = Timeline.objects.create(
-        autor = request.user,
-        solicitacao_id = solicitar.id,
-        descricao = f'{request.user.first_name} realizou a solicitação',
-        lado = lado
-
-    )
-    solicitacoes = Solicitacoes.objects.all().exclude(status=3).order_by('-id')
-    solicitacoes_paginators = Paginator(solicitacoes,50)
-    page_num = request.GET.get('pagina')
-    page = solicitacoes_paginators.get_page(page_num)
-
-    perfil = Perfil.objects.filter(und=destino).first()
-
-    gera_demanda = gera_demandas(solicitar.id,perfil.id,request.user,prioridade=prioridade)
-
-    try:
+    with transaction.atomic():
+        print(request.POST)
         arquivos = request.FILES.getlist('files[]')
-        for arquivo in arquivos:
-            fs1 = FileSystemStorage()
-            filename1 = fs1.save(arquivo.name, arquivo)
-            arquivo_url = fs1.url(filename1)
-            arquivos = Arquivos_Solicitacoes.objects.create(rota = arquivo_url,autor_id = request.user.id, solicitacao_id = solicitar.id)
+        titulo = request.POST.get('titulo','')
+        prazo_entrega = request.POST.get('prazo_entrega','')
+        prazo_entrega = convert_data_formatada(prazo_entrega)
+        destino = request.POST.get('destino','')
+        briefing = request.POST.get('editordata','')
+        prioridade = request.POST.get('prioridade','')
+        
+        
+        if titulo:
+            pass
+        else:
+            return JsonResponse({"error":True,"error_message": "Ops! Algo deu errado. Verifique se o título foi preenchido."}, status=400)
+        
+        if prazo_entrega:
+            pass
+        else:
+            return JsonResponse({"error":True,"error_message": "Ops! Algo deu errado. Verifique se o prazo de entrega foi preenchido."}, status=400)
+        
+        if destino:
+            pass
+        else:
+            return JsonResponse({"error":True,"error_message": "Ops! Algo deu errado. Verifique se o destino foi preenchido."}, status=400)
 
-    except:
-        pass
-    return render(request,'ajax/tbl_solicitacoes.html',{'paginas':page})
+
+        if briefing:
+            pass
+        else:
+            return JsonResponse({"error":True,"error_message": "Ops! Algo deu errado. Verifique se o briefing foi preenchido."}, status=400)
+        
+        solicitar = Solicitacoes.objects.create(
+            titulo = titulo,
+            prazo_entrega = prazo_entrega,
+            tipo_projeto = destino,
+            briefing = briefing,
+            autor = request.user,
+            status = 1
+
+        )
+
+        # lado = get_lado_timeline(solicitar.id)
+        # timeline = Timeline.objects.create(
+        #     autor = request.user,
+        #     solicitacao_id = solicitar.id,
+        #     descricao = f'{request.user.first_name} realizou a solicitação',
+        #     lado = lado
+
+        # )
+        timeline(solicitar,request.user.id,f'{request.user.first_name} realizou a solicitação')
+        solicitacoes = Solicitacoes.objects.all().exclude(status=3).order_by('-id')
+        solicitacoes_paginators = Paginator(solicitacoes,50)
+        page_num = request.GET.get('pagina')
+        page = solicitacoes_paginators.get_page(page_num)
+
+        perfil = Perfil.objects.filter(und=destino).first()
+
+        gera_demanda = gera_demandas(solicitar.id,perfil.id,request.user,prioridade=prioridade)
+
+
+
+        try:
+            arquivos = request.FILES.getlist('files[]')
+            for arquivo in arquivos:
+                fs1 = FileSystemStorage()
+                filename1 = fs1.save(arquivo.name, arquivo)
+                arquivo_url = fs1.url(filename1)
+                arquivos = Arquivos_Solicitacoes.objects.create(rota = arquivo_url,autor_id = request.user.id, solicitacao_id = solicitar.id)
+
+        except:
+            pass
+        return render(request,'ajax/tbl_solicitacoes.html',{'paginas':page})
 
 @login_required(login_url='/')
 def LineTimeline(request,codigo):

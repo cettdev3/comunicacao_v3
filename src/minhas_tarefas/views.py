@@ -8,18 +8,19 @@ from django.db import transaction
 from perfil.models import Perfil
 from solicitacoes.utils import *
 from django.contrib.auth.models import User
+from django.db import transaction
 
 @login_required(login_url='/')
 def Minhas_Tarefas(request):
     solicitacoes = Solicitacoes.objects.filter(pecas__demandas__designante=request.user).distinct()
     
     for solicitacao in solicitacoes:
-        total_demandas = Demandas.objects.filter(peca__solicitacao=solicitacao).count()
-        demandas_finalizadas = Demandas.objects.filter(peca__solicitacao=solicitacao, status=5).count()
+        total_demandas = Demandas.objects.filter(peca__solicitacao=solicitacao,designante_id = request.user.id).count()
+        demandas_finalizadas = Demandas.objects.filter(peca__solicitacao=solicitacao, status=5, designante_id = request.user.id).count()
 
-        demandas_andamento = Demandas.objects.filter(peca__solicitacao=solicitacao, status=2).count()
-        demandas_revisao = Demandas.objects.filter(peca__solicitacao=solicitacao).filter(status=3).count()
-        demandas_analise = Demandas.objects.filter(peca__solicitacao=solicitacao).filter(status=4).count()
+        demandas_andamento = Demandas.objects.filter(peca__solicitacao=solicitacao, status=2,designante_id = request.user.id).count()
+        demandas_revisao = Demandas.objects.filter(peca__solicitacao=solicitacao).filter(status=3,designante_id = request.user.id).count()
+        demandas_analise = Demandas.objects.filter(peca__solicitacao=solicitacao).filter(status=4,designante_id = request.user.id).count()
         solicitacao.total_demandas = total_demandas
         solicitacao.demandas_finalizadas = demandas_finalizadas
         solicitacao.demandas_andamento = demandas_andamento
@@ -108,16 +109,24 @@ def Cadastrar_Peca(request):
     todas_pecas = Pecas.objects.filter(solicitacao_id = solicitacaoId).all()
     return render(request,'ajax/ajax_tbl_pecas.html',{'pecas':todas_pecas})
 
+@login_required(login_url='/')
 def Designar_Usuário(request):
-    solicitacao = request.POST.get('solicitacao_id','')
-    peca = request.POST.get('peca','')
-    usuario = request.POST.get('usuario_id','')
-    # peca
-    # designante
-    # autor
-    # data_designacao
-    # prioridade
-    # descricao_entrega
-    # devolutiva
-    # status
-    demanda = Demandas.objects.create(peca_id = peca,designante_id = usuario,autor_id = request.user.id)
+    with transaction.atomic():
+        try:
+            solicitacao = request.POST.get('solicitacao_id','')
+            peca = request.POST.get('peca','')
+            usuario = request.POST.get('usuario_id','')
+            prioridade = request.POST.get('prioridade','')
+
+            demanda = Demandas.objects.create(peca_id = peca,designante_id = usuario,autor_id = request.user.id,prioridade = prioridade,status = 1)
+
+            all_pecas = Pecas.objects.filter(solicitacao_id = solicitacao).all()
+            for peca in all_pecas:
+                demandas_relacionadas = Demandas.objects.filter(peca=peca)
+                peca.demandas_relacionadas = demandas_relacionadas
+
+            print(all_pecas.values())
+
+            return render(request,'ajax/ajax_tbl_designacao.html',{'pecas':all_pecas})
+        except Exception as e:
+            print(e)
