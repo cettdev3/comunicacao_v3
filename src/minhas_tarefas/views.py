@@ -130,3 +130,41 @@ def Designar_Usuário(request):
             return render(request,'ajax/ajax_tbl_designacao.html',{'pecas':all_pecas})
         except Exception as e:
             print(e)
+
+@login_required(login_url='/')
+def alterarSolicitacao(request):
+    prazo_entrega = request.POST.get('prazo','')
+    prioridade = request.POST.get('prioridade','')
+    briefing = request.POST.get('briefing','')
+    solicitacao_id = request.POST.get('solicitacao_id','')
+
+    solicitacao = Solicitacoes.objects.get(id=solicitacao_id)
+    solicitacao.prazo_entrega = prazo_entrega
+    solicitacao.prioridade = prioridade
+    solicitacao.briefing = briefing
+    solicitacao.save()
+
+    return JsonResponse({"success_message": "Solicitação Alterada!"}, status=200)
+
+@login_required(login_url='/')
+def devolveSolicitacao(request):
+    solicitacao_id = request.POST.get('solicitacao_id','')
+    motivo = request.POST.get('motivo','')
+
+    solicitacao = Solicitacoes.objects.get(id=solicitacao_id)
+    solicitacao.motivo_devolucao = motivo
+    solicitacao.status = 4
+
+    solicitacao.save()
+
+    return JsonResponse({"success_message": "Solicitação Devolvida!"}, status=200)
+
+@login_required(login_url='/')
+def showDemandaModal(request):
+    demanda_id = request.GET.get('demandaid','')
+    demanda = Demandas.objects.filter(id=demanda_id).first()
+    arquivos_demandas = Arquivos_Demandas.objects.filter(demanda_id=demanda_id).all()
+    demanda.arquivos_demandas = arquivos_demandas
+
+
+    return render(request,'ajax/ajax_demanda_task.html',{'demanda':demanda}) 

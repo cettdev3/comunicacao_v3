@@ -1,0 +1,44 @@
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title" id="myLargeModalLabel">{{demanda.peca.titulo}}</h4>
+            <button type="button" class="btn-close"data-bs-toggle="modal" data-bs-target="#task-detail-modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="card border-secondary border">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Descrição da Entrega</h5>
+                    <p class="card-text">{{demanda.descricao_entrega|safe}}</p>
+                </div> <!-- end card-body-->
+                
+            </div> 
+
+            <div class="card border-secondary border">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Arquivos Anexados</h5>
+                    {% if demanda.arquivos_demandas %}
+                    <div class="row">
+                        {% for arquivo in demanda.arquivos_demandas %}
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <a style="width: 100%;" href="{{arquivo.rota}}" class="btn btn-soft-secondary">
+                                    <i class="ri-file-fill"></i><br>{{ arquivo.rota|cut:"/media/" }}
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                    </div>
+                    
+                        
+                        
+                        
+                    {% else %}
+                        <p class="card-text">Nenhum arquivo anexado</p>
+            {% endif %}
+                </div> <!-- end card-body-->
+                
+            </div> 
+        </div>
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
