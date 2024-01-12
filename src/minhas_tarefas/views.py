@@ -168,3 +168,15 @@ def showDemandaModal(request):
 
 
     return render(request,'ajax/ajax_demanda_task.html',{'demanda':demanda}) 
+
+@login_required(login_url='/')
+def revisaDemanda(request):
+    demanda_id = request.POST.get('demandaID','')
+    motivo = request.POST.get('motivo','')
+    demanda = Demandas.objects.get(id=demanda_id)
+    demanda.status = 3
+    demanda.devolutiva = motivo
+    demanda.save()
+
+
+    return JsonResponse({"success_message": "Solicitação Devolvida!"}, status=200)

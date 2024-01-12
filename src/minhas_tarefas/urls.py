@@ -1,5 +1,5 @@
 from django.urls import include, path
-from minhas_tarefas.views import Minhas_Tarefas,Show_Modal_Task,Concluir_Demanda,Cadastrar_Peca,Designar_Usuário,alterarSolicitacao,devolveSolicitacao,showDemandaModal
+from minhas_tarefas.views import Minhas_Tarefas,Show_Modal_Task,Concluir_Demanda,Cadastrar_Peca,Designar_Usuário,alterarSolicitacao,devolveSolicitacao,showDemandaModal,revisaDemanda
 
 urlpatterns = [
     path('meus-jobs',  Minhas_Tarefas),
@@ -10,4 +10,5 @@ urlpatterns = [
     path('ajax/altera-solicitacao',  alterarSolicitacao),
     path('ajax/devolve-solicitacao',  devolveSolicitacao),
     path('ajax/show-demanda-task',  showDemandaModal),
+    path('ajax/acoes-demanda',  revisaDemanda),
 ]

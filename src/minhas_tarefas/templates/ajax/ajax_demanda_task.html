@@ -27,7 +27,7 @@
                             </div>
                         </div>
                         {% endfor %}
-                        
+                       
                     </div>
                     
                         
@@ -36,9 +36,183 @@
                     {% else %}
                         <p class="card-text">Nenhum arquivo anexado</p>
             {% endif %}
+
                 </div> <!-- end card-body-->
                 
             </div> 
+            <div class="row">
+                <div class="col-4">
+                    <div class="mb-3">
+                        <button {% if demanda.status != 5 %} disabled {% endif %} style="width: 100%;" type="button" onclick="acaoDemanda('{{demanda.id}}','1')" class="btn btn-danger"><i class="ri-corner-up-left-line me-1"></i> <span>Reabrir Demanda</span> </button>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="mb-3">
+                        <button  {% if demanda.status != 4 %} disabled {% endif %} style="width: 100%;" type="button" onclick="revisaoDemanda('{{demanda.id}}')" class="btn btn-warning"><i class="ri-draft-line me-1"></i> <span>Solicitar Revisão</span> </button>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="mb-3">
+                        <button {% if demanda.status != 4 %} disabled {% endif %} style="width: 100%;" type="button" onclick="acaoDemanda('{{demanda.id}}','5')" class="btn btn-success"><i class="ri-check-double-line me-1"></i> <span>Aprovar Demanda</span> </button>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="mb-3">
+                        <div class="col-12" id="motivo_revisao" style="display: none;">
+                            <div class="mb-3">
+                                <label for="solicitacaotext" class="form-label">Informe o Motivo da Revisão:</label>
+                                <textarea class="summernote"  id="motivo_revisao_text" name="motivo_revisao_text"></textarea>
+                                <button onclick="acaoDemanda('{{demanda.id}}','3')" style="width: 100%;" type="button" class="btn btn-soft-danger rounded-pill mt-2"> <i class="ri-corner-up-left-fill"></i> Solicitar Revisão</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
+
+<script>
+
+function acaoDemanda(demandaID,status){
+    var XCSRFToken = '{{ csrf_token }}';
+    var motivo = document.getElementById('motivo_revisao_text').value;
+
+    if (status == '3') {
+        if(motivo == ""){
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Por favor, informe o motivo da revisão!',
+
+        })
+    }else{
+        Swal.fire({
+        title: 'Revisar Demanda',
+        text: 'Deseja realmente solicitar a revisão desta demanda?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Não'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const url = "/ajax/acoes-demanda";
+
+           
+            
+            // Use a função $.ajax do jQuery para fazer a solicitação AJAX
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {'demandaID':demandaID,'motivo':motivo,'status':status},
+                headers: { "X-CSRFToken": XCSRFToken },
+                success: function (data) {
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Demanda em Revisão!',
+                        text: "A demanda foi enviada para o usuário revisar!",
+                    }).then((result) => {
+                        // Ação a ser realizada após o botão "OK" ser clicado
+                        if (result.isConfirmed) {
+                            location.reload();
+                           
+                           
+                        }
+                    });                                                                                                                                                                            
+                },
+                error: function (data) {
+                    console.log(data)
+                    if (data.responseJSON && data.responseJSON.error_message) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ops!',
+                            text: data.responseJSON.error_message
+                        });
+                    }
+                }
+            });
+        }
+    });
+    }
+
+    if (status == '5') {
+
+        Swal.fire({
+        title: 'Aprovar Demanda',
+        text: 'Deseja realmente aprovar a demanda?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Não'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const url = "/ajax/acoes-demanda";
+
+           
+            
+            // Use a função $.ajax do jQuery para fazer a solicitação AJAX
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {'demandaID':demandaID,'motivo':'','status':status},
+                headers: { "X-CSRFToken": XCSRFToken },
+                success: function (data) {
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Demanda em Revisão!',
+                        text: "A demanda foi enviada para o usuário revisar!",
+                    }).then((result) => {
+                        // Ação a ser realizada após o botão "OK" ser clicado
+                        if (result.isConfirmed) {
+                            location.reload();
+                           
+                           
+                        }
+                    });                                                                                                                                                                            
+                },
+                error: function (data) {
+                    console.log(data)
+                    if (data.responseJSON && data.responseJSON.error_message) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ops!',
+                            text: data.responseJSON.error_message
+                        });
+                    }
+                }
+            });
+        }
+    });
+    
+
+    }
+    }
+   
+    
+}
+
+function revisaoDemanda(){
+    var elemento = document.getElementById("motivo_revisao");
+    elemento.style.display = 'block';
+}
+
+$('.summernote').summernote(
+    {
+  toolbar: [
+    ['style', ['bold', 'italic', 'underline', 'clear']],
+    ['font', ['strikethrough', 'superscript', 'subscript']],
+    ['para', ['ul', 'ol']],
+
+    // Outras opções de toolbar que você deseja incluir, mas sem 'link'
+  ],
+  // Outras configurações necessárias para o seu uso
+}
+  );
+</script>
