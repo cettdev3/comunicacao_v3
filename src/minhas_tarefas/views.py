@@ -10,6 +10,21 @@ from solicitacoes.utils import *
 from django.contrib.auth.models import User
 from django.db import transaction
 
+def gera_demandas(solicitacao_id,designante,autor,prioridade,titulo):
+    peca = Pecas.objects.create(solicitacao_id=solicitacao_id,titulo=titulo)
+    demandas = Demandas.objects.create(designante_id=designante,autor_id=autor,prioridade=prioridade,peca_id=peca.id,status=1)
+    return demandas
+
+def timeline(solicitacao,autorId,descricao):
+    lado_timeline = get_lado_timeline(solicitacao.id)
+    timeline = Timeline.objects.create(
+        autor_id = autorId,
+        solicitacao_id = solicitacao.id,
+        descricao = descricao,
+        lado = lado_timeline
+
+    )
+
 @login_required(login_url='/')
 def Minhas_Tarefas(request):
     solicitacoes = Solicitacoes.objects.filter(pecas__demandas__designante=request.user).distinct()
@@ -80,19 +95,15 @@ def Concluir_Demanda(request):
                 description = f'{request.user.first_name} concluiu a designação'
             else:
                 demanda.status = 4
-                description = f'{request.user.first_name} concluiu a entrega e está em análise',
+                description = f'{request.user.first_name} concluiu a entrega e está em análise'
             demanda.descricao_entrega = descricao
             demanda.save()
 
             solicitacao_id = Demandas.objects.filter(id=demandaId).first().peca.solicitacao.id
-            lado = get_lado_timeline(solicitacao_id)
-            timeline = Timeline.objects.create(
-                autor = request.user,
-                solicitacao_id = solicitacao_id,
-                descricao = description,
-                lado = lado
-
-    )
+            solicitacao = Solicitacoes.objects.get(id=solicitacao_id)
+            timeline(solicitacao,request.user.id,description)
+            if und.und == 5:
+                gera_demandas(solicitacao_id,demanda.autor_id,request.user.id,1,f'{demanda.peca.titulo} de {request.user.first_name}')
 
             return JsonResponse({"success":True,"success_message": "Entrega realizada com sucesso!"}, status=200)
         
@@ -103,10 +114,13 @@ def Concluir_Demanda(request):
 def Cadastrar_Peca(request):
     print(request.POST)
     solicitacaoId = request.POST.get('solicitacao_id','')
-    peca = request.POST.get('peca','')
+    solicitacao = Solicitacoes.objects.get(id=solicitacaoId)
+    peca_name = request.POST.get('peca','')
 
-    peca = Pecas.objects.create(titulo=peca,solicitacao_id = solicitacaoId)
+    peca = Pecas.objects.create(titulo=peca_name,solicitacao_id = solicitacaoId)
     todas_pecas = Pecas.objects.filter(solicitacao_id = solicitacaoId).all()
+
+    timeline(solicitacao,request.user.id,f'{request.user.first_name} cadastrou a peça {peca_name}')
     return render(request,'ajax/ajax_tbl_pecas.html',{'pecas':todas_pecas})
 
 @login_required(login_url='/')
@@ -114,9 +128,13 @@ def Designar_Usuário(request):
     with transaction.atomic():
         try:
             solicitacao = request.POST.get('solicitacao_id','')
+            solicitacao_ = Solicitacoes.objects.get(id=solicitacao)
+
             peca = request.POST.get('peca','')
+            peca_ = Pecas.objects.filter(id=peca).first()
             usuario = request.POST.get('usuario_id','')
             prioridade = request.POST.get('prioridade','')
+            profile = User.objects.filter(id=usuario).first()
 
             demanda = Demandas.objects.create(peca_id = peca,designante_id = usuario,autor_id = request.user.id,prioridade = prioridade,status = 1)
 
@@ -125,7 +143,7 @@ def Designar_Usuário(request):
                 demandas_relacionadas = Demandas.objects.filter(peca=peca)
                 peca.demandas_relacionadas = demandas_relacionadas
 
-            print(all_pecas.values())
+            timeline(solicitacao_,request.user.id,f'{request.user.first_name} designou {profile.first_name} a realizar uma atividade em {peca_.titulo}.')
 
             return render(request,'ajax/ajax_tbl_designacao.html',{'pecas':all_pecas})
         except Exception as e:
@@ -173,10 +191,27 @@ def showDemandaModal(request):
 def revisaDemanda(request):
     demanda_id = request.POST.get('demandaID','')
     motivo = request.POST.get('motivo','')
-    demanda = Demandas.objects.get(id=demanda_id)
-    demanda.status = 3
-    demanda.devolutiva = motivo
-    demanda.save()
+    status = request.POST.get('status','')
+    solicitacao = Demandas.objects.filter(id=demanda_id).first().peca.solicitacao
 
+
+    if status == '3':
+        demanda = Demandas.objects.get(id=demanda_id)
+        demanda.status = 3
+        demanda.devolutiva = motivo
+        demanda.save()
+        timeline(solicitacao,request.user.id,f'{request.user.first_name} revisou a demanda de {demanda.designante.first_name} na peça {demanda.peca.titulo}.')
+
+    elif status == '5':
+        demanda = Demandas.objects.get(id=demanda_id)
+        demanda.status = 5
+        demanda.save()
+        timeline(solicitacao,request.user.id,f'{request.user.first_name} aprovou a entrega da demanda de {demanda.designante.first_name} na peça {demanda.peca.titulo}.')
+
+    elif status == '1':
+        demanda = Demandas.objects.get(id=demanda_id)
+        demanda.status = 1
+        demanda.save()
+        timeline(solicitacao,request.user.id,f'{request.user.first_name} reabriu a demanda de {demanda.designante.first_name} na peça {demanda.peca.titulo}.')
 
     return JsonResponse({"success_message": "Solicitação Devolvida!"}, status=200)

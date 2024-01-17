@@ -78,6 +78,7 @@
 function acaoDemanda(demandaID,status){
     var XCSRFToken = '{{ csrf_token }}';
     var motivo = document.getElementById('motivo_revisao_text').value;
+    
 
     if (status == '3') {
         if(motivo == ""){
@@ -86,7 +87,8 @@ function acaoDemanda(demandaID,status){
             title: 'Oops...',
             text: 'Por favor, informe o motivo da revisão!',
 
-        })
+        });
+
     }else{
         Swal.fire({
         title: 'Revisar Demanda',
@@ -136,7 +138,8 @@ function acaoDemanda(demandaID,status){
                 }
             });
         }
-    });
+        })
+        }
     }
 
     if (status == '5') {
@@ -166,8 +169,8 @@ function acaoDemanda(demandaID,status){
                     
                     Swal.fire({
                         icon: 'success',
-                        title: 'Demanda em Revisão!',
-                        text: "A demanda foi enviada para o usuário revisar!",
+                        title: 'Demanda Aprovada!',
+                        text: "A demanda foi aprovada com sucesso!",
                     }).then((result) => {
                         // Ação a ser realizada após o botão "OK" ser clicado
                         if (result.isConfirmed) {
@@ -193,10 +196,63 @@ function acaoDemanda(demandaID,status){
     
 
     }
+    if (status == '1') {
+        console.log(status)
+        Swal.fire({
+        title: 'Reabrir Demanda',
+        text: 'Deseja realmente reabrir esta demanda?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Não'
+        }).then((result) => {
+        if (result.isConfirmed) {
+            const url = "/ajax/acoes-demanda";
+
+        
+            
+            // Use a função $.ajax do jQuery para fazer a solicitação AJAX
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {'demandaID':demandaID,'motivo':'','status':status},
+                headers: { "X-CSRFToken": XCSRFToken },
+                success: function (data) {
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Demanda Reaberta!',
+                        text: "A demanda foi reaberta com sucesso!",
+                    }).then((result) => {
+                        // Ação a ser realizada após o botão "OK" ser clicado
+                        if (result.isConfirmed) {
+                            location.reload();
+                        
+                        
+                        }
+                    });                                                                                                                                                                            
+                },
+                error: function (data) {
+                    console.log(data)
+                    if (data.responseJSON && data.responseJSON.error_message) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ops!',
+                            text: data.responseJSON.error_message
+                        });
+                    }
+                }
+            });
+        }
+        });
+
+
+        }
+
     }
-   
-    
-}
+
 
 function revisaoDemanda(){
     var elemento = document.getElementById("motivo_revisao");

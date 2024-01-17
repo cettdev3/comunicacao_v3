@@ -4,6 +4,22 @@ from django.contrib.auth.models import User
 from perfil.models import Perfil
 # Create your models here.
 
+def demandas_update(self):
+    pecas = Pecas.objects.filter(solicitacao=self)
+    demandas = Demandas.objects.filter(peca__in=pecas).count()
+    demandas_concluidas = Demandas.objects.filter(peca__in=pecas).filter(status=5).count()
+
+    if demandas_concluidas == demandas:
+        self.status = 3
+        self.save()
+    elif demandas_concluidas > 0 and demandas_concluidas < demandas:
+        self.status = 2
+        self.save()
+    else:
+        self.status = 1
+        self.save()
+
+    return demandas
 
 class Solicitacoes(models.Model):
     choice_projeto = [(1,'EFG'),(2,'COTEC'),(3,'CETT'),(4,'BASILEU')]
@@ -24,12 +40,19 @@ class Solicitacoes(models.Model):
     def count_demandas(self):
         pecas = Pecas.objects.filter(solicitacao=self)
         demandas = Demandas.objects.filter(peca__in=pecas).count()
+        
         return demandas
+    
+    
+    
+
+
     
     def get_prioridade_display(self):
         return dict(self.choice_prioridade)[self.prioridade]
     
     def get_status_display(self):
+        demandas_update(self)
         return dict(self.choices_status)[self.status]
 
     def get_projeto_display(self):

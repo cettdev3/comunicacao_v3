@@ -31,7 +31,9 @@ def convert_data_formatada(data):
 
 @login_required(login_url='/')
 def Solicitacao(request):
-    solicitacoes = Solicitacoes.objects.all().exclude(status=3).order_by('-id')
+
+    # solicitacoes = Solicitacoes.objects.all().exclude(status=3).order_by('-id')
+    solicitacoes = Solicitacoes.objects.all().order_by('-id')
     solicitacoes_paginators = Paginator(solicitacoes,50)
     page_num = request.GET.get('pagina')
     page = solicitacoes_paginators.get_page(page_num)

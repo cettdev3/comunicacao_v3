@@ -54,7 +54,7 @@
                                 </li>
                                 <li class="nav-item">
                                     <a href="#settings1" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-0">
-                                        Designar Usuários
+                                        Tarefas Designadas
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -82,7 +82,12 @@
                                             <div id="collapseOne{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="headingOne"
                                                 data-bs-parent="#accordionExample">
                                                 <div class="accordion-body">
-
+                                                        {% if peca.demanda_relacionada.status == 3 %}
+                                                        <div class="alert alert-danger" role="alert">
+                                                           <span>{{ peca.demanda_relacionada.devolutiva|striptags|safe }}
+                                                        </span>
+                                                        </div>
+                                                        {% endif %}
                                                     {% if peca.demanda_relacionada.status != 5 and peca.demanda_relacionada.status != 4 %}
                                                     <form id="formRealizaEntrega_{{forloop.counter}}"  method="POST" enctype="multipart/form-data">
                                                     <div class="row d-flex align-items-center justify-content-center">
@@ -208,7 +213,7 @@
                                         <div class="col-12">
                                             <div class="mb-3">
                                                 <div class="table-responsive-sm">
-                                                    <table class="table table-centered mb-0">
+                                                    <table class="table table-centered mb-0" style="font-size: 12px;">
                                                         <thead>
                                                             <tr>
                                                                 <th>Usuário Designado</th>
@@ -218,7 +223,7 @@
                                                                 <th>Ação</th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody id="tbl_designacoes">
+                                                        <tbody id="tbl_designacoes" >
                                                             {% for peca in solicitacao.todas_pecas %}
                                                                 {% for demanda in peca.demandas_relacionadas.all %}
                                                                     <tr>
@@ -639,7 +644,7 @@ function cadastrarPeca(solicitacaoId){
                 data: {'solicitacao_id':solicitacaoId,'peca':peca},
                 headers: { "X-CSRFToken": XCSRFToken },
                 success: function (data) {
-                    
+                    console.log(data)
                     Swal.fire({
                         icon: 'success',
                         title: 'Peça Cadastrada!',
@@ -649,6 +654,8 @@ function cadastrarPeca(solicitacaoId){
                         if (result.isConfirmed) {
                             $("#tbl_pecas").html(data);
                             peca = ""
+
+                            modalTaskView(solicitacaoId);
                            
                         }
                     });
@@ -757,7 +764,8 @@ $(document).ready(function() {
   // Outras configurações necessárias para o seu uso
 }
   );
-  $('#solicitacaotext').summernote('code', '{{solicitacao.briefing|safe}}');
+  var briefing = `{{solicitacao.briefing|safe}}`
+  $('#solicitacaotext').summernote('code', briefing);
 });
 
 
