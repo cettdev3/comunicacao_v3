@@ -8,12 +8,16 @@ def demandas_update(self):
     pecas = Pecas.objects.filter(solicitacao=self)
     demandas = Demandas.objects.filter(peca__in=pecas).count()
     demandas_concluidas = Demandas.objects.filter(peca__in=pecas).filter(status=5).count()
+    demandas_enviadas = Demandas.objects.filter(peca__in=pecas).filter(status=6).count()
 
     if demandas_concluidas == demandas:
         self.status = 3
         self.save()
-    elif demandas_concluidas > 0 and demandas_concluidas < demandas:
+    elif demandas_concluidas > 0 and demandas_concluidas < demandas and demandas_enviadas == 0:
         self.status = 2
+        self.save()
+    elif demandas_enviadas >= 1:
+        self.status = 6
         self.save()
     else:
         self.status = 1
@@ -23,7 +27,7 @@ def demandas_update(self):
 
 class Solicitacoes(models.Model):
     choice_projeto = [(1,'EFG'),(2,'COTEC'),(3,'CETT'),(4,'BASILEU')]
-    choices_status = [(1,'EM ANÁLISE'),(2,'EM PRODUÇÃO'),(3,'CONCLUÍDA'),(4,'DEVOLVIDA'),(5,'CANCELADA')]
+    choices_status = [(1,'EM ANÁLISE'),(2,'EM PRODUÇÃO'),(3,'AGUARDANDO ENTREGAS'),(4,'DEVOLVIDA'),(5,'CANCELADA'),(6,'ENTREGAS REALIZADAS')]
     choice_prioridade = [(1,'Normal'),(2,'Urgente')]
     id = models.AutoField(primary_key=True)
     titulo = models.TextField(null=False,blank=False)
@@ -43,10 +47,6 @@ class Solicitacoes(models.Model):
         
         return demandas
     
-    
-    
-
-
     
     def get_prioridade_display(self):
         return dict(self.choice_prioridade)[self.prioridade]
@@ -73,7 +73,7 @@ class Pecas(models.Model):
 
 
 class Demandas(models.Model):
-    choice_status = [(1,'A Fazer'),(2,'Em Progresso'),(3,'Em Revisão'),(4,'Em Análise'),(5,'Concluído')]
+    choice_status = [(1,'A Fazer'),(2,'Em Progresso'),(3,'Em Revisão'),(4,'Em Análise'),(5,'Concluído'),(6,'Entregue')]
     choice_prioridade = [(1,'Normal'),(2,'Urgente')]
     id = models.AutoField(primary_key=True)
     peca = models.ForeignKey(Pecas,on_delete=models.CASCADE,null=False,blank=False)
@@ -107,3 +107,11 @@ class Timeline(models.Model):
     
     class Meta:
         db_table = 'timeline'
+
+class Entregas(models.Model):
+    id = models.AutoField(primary_key=True)
+    demanda = models.ForeignKey(Demandas,on_delete=models.CASCADE)
+    solicitacao = models.ForeignKey(Solicitacoes,on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'entregas'

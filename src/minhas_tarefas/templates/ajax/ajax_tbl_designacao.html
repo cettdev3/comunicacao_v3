@@ -17,7 +17,7 @@
                 <td><span class="badge badge-outline-danger rounded-pill">{{demanda.get_status_display}}</span></td>
                 {% elif demanda.status == 4 %}
                 <td><span class="badge badge-outline-primary rounded-pill">{{demanda.get_status_display}}</span></td>
-                {% elif demanda.status == 5 %}
+                {% elif demanda.status == 5 or demanda.status == 6 %}
                 <td><span class="badge badge-outline-success rounded-pill">{{demanda.get_status_display}}</span></td>
                 {% endif %}
 
