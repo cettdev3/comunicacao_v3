@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .models import Solicitacoes, Timeline, Demandas, Pecas
+from .models import Solicitacoes, Timeline, Demandas, Pecas,Entregas
 from repositorio.models import Arquivos_Solicitacoes
 from perfil.models import Perfil
 from django.core.paginator import Paginator
@@ -37,7 +37,8 @@ def Solicitacao(request):
     solicitacoes_paginators = Paginator(solicitacoes,50)
     page_num = request.GET.get('pagina')
     page = solicitacoes_paginators.get_page(page_num)
-    return render(request,'solicitacoes.html',{'paginas':page,'solicitacoes':solicitacoes})
+    perfil = Perfil.objects.filter(user_profile=request.user).first()
+    return render(request,'solicitacoes.html',{'paginas':page,'solicitacoes':solicitacoes,'perfil':perfil})
 
 @login_required(login_url='/')
 def Paginar(request):
@@ -155,3 +156,9 @@ def Realizar_Solicitacao(request):
 def LineTimeline(request,codigo):
     itens = Timeline.objects.filter(solicitacao_id=codigo).all().order_by('-id')
     return render(request,'timeline.html',{'itens':itens})	
+
+@login_required(login_url='/')
+def Entregas_Realizadas(request):
+    solicitacao = request.GET.get('solicitacao_id','')
+    entregas = Entregas.objects.filter(solicitacao_id=solicitacao).all().order_by('-id')
+    return render(request,'ajax/modal_show_entregas.html',{'entregas':entregas})	

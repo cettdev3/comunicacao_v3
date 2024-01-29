@@ -1,0 +1,36 @@
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-body p-4">
+            <div class="text-center">
+                <i class="ri-folder-4-fill h1 text-warning"></i>
+                <h4 class="mt-2">Demandas Entregues</h4>
+                {% for entrega in entregas %}
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne{{forloop.counter}}"
+                                aria-expanded="true" aria-controls="collapseOne">
+                               {{entrega.demanda.peca.titulo}}  
+                            </button>
+                        </h2>
+                        <div id="collapseOne{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                            data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                    
+                                    <div class="alert alert-primary" role="alert" style="text-align: left;">
+                                       <span>{{ entrega.demanda.descricao_entrega|striptags|safe }}
+                                    </span>
+                                    </div>
+                            
+                             
+                            </div>
+                        </div>
+                    </div>
+
+         
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->

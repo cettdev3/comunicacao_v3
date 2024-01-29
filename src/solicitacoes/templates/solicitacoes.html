@@ -186,7 +186,7 @@
                                         <tbody id="tbl_solicitacoes">
                                         {% for solicitacao in paginas %}
     
-                                            <tr style="cursor: pointer;"  onclick="acessarSolicitacao('{{solicitacao.id}}')">
+                                            <tr style="cursor: pointer;"  {% if perfil.und == 5 %} onclick="modalEntragas('{{solicitacao.id}}')" {% else %} onclick="acessarSolicitacao('{{solicitacao.id}}')" {% endif %}>
                                                 <td>#{{solicitacao.id}}</td>
                                                 <td>{{solicitacao.titulo}}</td>
                                                 <td>{{solicitacao.data_solicitacao|date:'d/m/Y'}}</td>
@@ -262,6 +262,10 @@
 
     </div> <!-- content -->
 
+    <div id="warning-alert-modal" class="modal fade" tabindex="-1" style="display: none;" aria-hidden="true">
+        
+    </div>
+
     <!-- Footer Start -->
     <footer class="footer">
         <div class="container-fluid">
@@ -284,6 +288,29 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
+
+function modalEntragas(solicitacaoId) {
+    const url = '/ajax/ajax-entregas';
+
+    $.ajax({
+        url,
+        type: 'GET',
+        data: { 'solicitacao_id': solicitacaoId },
+        success: function(data) {
+            $("#warning-alert-modal").html(data);
+            console.log('era pra abrir')
+            $("#warning-alert-modal").modal('show');
+            
+        },
+        error: function(xhr, status, error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Ops!',
+                text: 'Não foi possível obter resultados!'
+            });
+        }
+    });
+}
 
 function RealizaSolicitacao(){
     var form = document.getElementById("form_solicitacao");
