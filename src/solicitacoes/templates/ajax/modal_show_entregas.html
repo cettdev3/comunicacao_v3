@@ -5,7 +5,7 @@
                 <i class="ri-folder-4-fill h1 text-warning"></i>
                 <h4 class="mt-2">Demandas Entregues</h4>
                 {% for entrega in entregas %}
-                <div class="accordion" id="accordionExample">
+                <div class="accordion mb-2" id="accordionExample">
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="headingOne">
                             <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne{{forloop.counter}}"
@@ -18,9 +18,31 @@
                             <div class="accordion-body">
                                     
                                     <div class="alert alert-primary" role="alert" style="text-align: left;">
-                                       <span>{{ entrega.demanda.descricao_entrega|striptags|safe }}
+                                       <span>{{ entrega.demanda.descricao_entrega|safe }}
                                     </span>
                                     </div>
+        
+                                    {% if entrega.file_demandas %}
+                                    <div class="card border-primary border">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-primary">Arquivos Anexados</h5>
+                                            
+                                            <div class="row">
+                                                {% for arquivo in entrega.file_demandas %}
+                                                <div class="col-12">
+                                                    <div class="mb-3">
+                                                        <a style="width: 100%;" href="{{arquivo.rota}}" class="btn btn-soft-secondary">
+                                                            <i class="ri-file-fill"></i><br>{{ arquivo.rota|cut:"/media/" }}
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                               
+                                            </div>
+                                        </div> <!-- end card-body-->
+                                    </div>
+                                    
+                                    {% endif %}
                             
                              
                             </div>
@@ -29,6 +51,7 @@
 
          
                 </div>
+               
                 {% endfor %}
             </div>
         </div>

@@ -39,7 +39,7 @@
 
                                 {% for solicitacao in solicitacoes %}
                                                             
-                                    {% if solicitacao.demandas_finalizadas == 0 and solicitacao.demandas_andamento == 0 and solicitacao.demandas_revisao == 0 and solicitacao.demandas_finalizadas == 0 and solicitacao.demandas_analise == 0 %}
+                                    {% if solicitacao.demandas_finalizadas == 0 and solicitacao.demandas_andamento == 0 and solicitacao.demandas_revisao == 0 and solicitacao.demandas_finalizadas == 0 and solicitacao.demandas_analise == 0 and solicitacao.demandas_entregues == 0 %}
                                         <div class="card mb-0" task_id="1">
                                             <div class="card-body p-3">
                                             <span class="float-end badge bg-success-subtle text-success"><b>Prazo: {{ solicitacao.prazo_entrega|date:"d/m/Y" }}</b></span>

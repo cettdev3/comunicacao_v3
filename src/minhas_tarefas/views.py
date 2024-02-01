@@ -13,7 +13,13 @@ from django.db import transaction
 
 def gera_demandas(solicitacao_id,designante,autor,prioridade,titulo,peca):
     # peca = Pecas.objects.create(solicitacao_id=solicitacao_id,titulo=titulo)
-    demandas = Demandas.objects.create(designante_id=designante,autor_id=autor,prioridade=prioridade,peca_id=peca,status=1)
+    demandas_recebidas = Demandas.objects.filter(designante_id = designante,peca_id=peca).first()
+    if demandas_recebidas:
+        demandas_recebidas.status = 1
+        demandas_recebidas.save()
+        demandas = demandas_recebidas
+    else:
+        demandas = Demandas.objects.create(designante_id=designante,autor_id=autor,prioridade=prioridade,peca_id=peca,status=1)
     return demandas
 
 def timeline(solicitacao,autorId,descricao):
@@ -37,11 +43,13 @@ def Minhas_Tarefas(request):
         demandas_andamento = Demandas.objects.filter(peca__solicitacao=solicitacao, status=2,designante_id = request.user.id).count()
         demandas_revisao = Demandas.objects.filter(peca__solicitacao=solicitacao).filter(status=3,designante_id = request.user.id).count()
         demandas_analise = Demandas.objects.filter(peca__solicitacao=solicitacao).filter(status=4,designante_id = request.user.id).count()
+        demandas_entregues = Demandas.objects.filter(peca__solicitacao=solicitacao, status=6,designante_id = request.user.id).count()
         solicitacao.total_demandas = total_demandas
-        solicitacao.demandas_finalizadas = demandas_finalizadas
+        solicitacao.demandas_finalizadas = demandas_finalizadas + demandas_entregues
         solicitacao.demandas_andamento = demandas_andamento
         solicitacao.demandas_revisao = demandas_revisao
         solicitacao.demandas_analise = demandas_analise
+        solicitacao.demandas_entregues = demandas_entregues
         
     return render(request,'minhas_tarefas.html',{'solicitacoes':solicitacoes})
 
@@ -222,11 +230,15 @@ def revisaDemanda(request):
             timeline(solicitacao,request.user.id,f'{request.user.first_name} aprovou a entrega da demanda de {demanda.designante.first_name} na peça {demanda.peca.titulo}.')
     
     elif status == '6':
-       demanda = Demandas.objects.get(id=demanda_id)
-       entrega = Entregas.objects.create(demanda_id=demanda_id,solicitacao_id=solicitacao.id)
+        demanda = Demandas.objects.get(id=demanda_id)
+        entregas_realizadas = Entregas.objects.filter(demanda_id=demanda_id).count()
+        if entregas_realizadas == 0:
+            entrega = Entregas.objects.create(demanda_id=demanda_id,solicitacao_id=solicitacao.id)
 
-       demanda.status = 6
-       demanda.save()
+
+
+        demanda.status = 6
+        demanda.save()
 
     elif status == '1':
         demanda = Demandas.objects.get(id=demanda_id)

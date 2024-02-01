@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Solicitacoes, Timeline, Demandas, Pecas,Entregas
-from repositorio.models import Arquivos_Solicitacoes
+from repositorio.models import Arquivos_Solicitacoes,Arquivos_Demandas
 from perfil.models import Perfil
 from django.core.paginator import Paginator
 from django.core.files.storage import FileSystemStorage
@@ -161,4 +161,9 @@ def LineTimeline(request,codigo):
 def Entregas_Realizadas(request):
     solicitacao = request.GET.get('solicitacao_id','')
     entregas = Entregas.objects.filter(solicitacao_id=solicitacao).all().order_by('-id')
-    return render(request,'ajax/modal_show_entregas.html',{'entregas':entregas})	
+    for entrega in entregas:
+        demanda_id = entrega.demanda_id
+        arquivos_demandas = Arquivos_Demandas.objects.filter(demanda_id=demanda_id).all().order_by('-id')
+        entrega.file_demandas = arquivos_demandas
+        print(entrega.file_demandas)
+    return render(request,'ajax/modal_show_entregas.html',{'entregas':entregas})	 
