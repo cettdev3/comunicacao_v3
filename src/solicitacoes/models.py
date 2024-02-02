@@ -9,16 +9,21 @@ def demandas_update(self):
     demandas = Demandas.objects.filter(peca__in=pecas).count()
     demandas_concluidas = Demandas.objects.filter(peca__in=pecas).filter(status=5).count()
     demandas_enviadas = Demandas.objects.filter(peca__in=pecas).filter(status=6).count()
+    print(pecas.count())
 
-    if demandas_concluidas == demandas:
+    if demandas_concluidas == demandas and pecas.count() > 1:
         self.status = 3
         self.save()
-    elif demandas_concluidas > 0 and demandas_concluidas < demandas and demandas_enviadas == 0:
+    elif demandas_concluidas > 0 and demandas_concluidas < demandas and demandas_enviadas == 0 and pecas.count() > 1:
         self.status = 2
         self.save()
-    elif demandas_enviadas >= 1:
+    elif demandas_enviadas >= 1 and pecas.count() > 1:
         self.status = 6
         self.save()
+    
+    elif self.status == 4:
+        return demandas
+    
     else:
         self.status = 1
         self.save()

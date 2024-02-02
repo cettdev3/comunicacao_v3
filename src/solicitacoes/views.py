@@ -46,8 +46,8 @@ def Paginar(request):
     solicitacoes_paginators = Paginator(solicitacoes,50)
     page_num = request.GET.get('pagina')
     page = solicitacoes_paginators.get_page(page_num)
-
-    return render(request,'ajax/tbl_solicitacoes.html',{'paginas':page})
+    perfil = Perfil.objects.filter(user_profile_id=request.user.id).first()
+    return render(request,'ajax/tbl_solicitacoes.html',{'paginas':page,'perfil':perfil})
 
 @login_required(login_url='/')
 def Filter_Solicitacoes(request):
@@ -75,7 +75,8 @@ def Filter_Solicitacoes(request):
     solicitacoes_paginators = Paginator(sl,50)
     page_num = request.GET.get('pagina')
     page = solicitacoes_paginators.get_page(page_num)
-    return render(request,'ajax/tbl_solicitacoes.html',{'paginas':page})
+    perfil = Perfil.objects.filter(user_profile_id=request.user.id).first()
+    return render(request,'ajax/tbl_solicitacoes.html',{'paginas':page,'perfil':perfil})
 
 def Realizar_Solicitacao(request):
     with transaction.atomic():
@@ -159,6 +160,7 @@ def LineTimeline(request,codigo):
 
 @login_required(login_url='/')
 def Entregas_Realizadas(request):
+    
     solicitacao = request.GET.get('solicitacao_id','')
     entregas = Entregas.objects.filter(solicitacao_id=solicitacao).all().order_by('-id')
     for entrega in entregas:
@@ -166,4 +168,11 @@ def Entregas_Realizadas(request):
         arquivos_demandas = Arquivos_Demandas.objects.filter(demanda_id=demanda_id).all().order_by('-id')
         entrega.file_demandas = arquivos_demandas
         print(entrega.file_demandas)
-    return render(request,'ajax/modal_show_entregas.html',{'entregas':entregas})	 
+    return render(request,'ajax/modal_show_entregas.html',{'entregas':entregas})
+
+def Retifica_Solicitacao(request):
+    solicitacao_id = request.GET.get('solicitacao_id','')
+    solicitacao = Solicitacoes.objects.filter(id=solicitacao_id).first()
+    arquivos_solicitacoes = Arquivos_Solicitacoes.objects.filter(solicitacao_id = solicitacao_id).all()
+    solicitacao.arquivos_solicitacao = arquivos_solicitacoes
+    return render(request,'ajax/modal_retifica_solicitacao.html',{'solicitacao':solicitacao})

@@ -186,7 +186,7 @@
                                         <tbody id="tbl_solicitacoes">
                                         {% for solicitacao in paginas %}
     
-                                            <tr style="cursor: pointer;"  {% if perfil.und == 5 %} onclick="modalEntragas('{{solicitacao.id}}')" {% else %} onclick="acessarSolicitacao('{{solicitacao.id}}')" {% endif %}>
+                                            <tr style="cursor: pointer;"  {% if perfil.und == 5 and solicitacao.status != 4 %} onclick="modalEntragas('{{solicitacao.id}}')" {% elif solicitacao.status == 4 %} onclick="retificarSolicitacao('{{solicitacao.id}}')" {% else %} onclick="acessarSolicitacao('{{solicitacao.id}}')" {% endif %}>
                                                 <td>#{{solicitacao.id}}</td>
                                                 <td>{{solicitacao.titulo}}</td>
                                                 <td>{{solicitacao.data_solicitacao|date:'d/m/Y'}}</td>
@@ -496,6 +496,26 @@ function acessarSolicitacao(solicitacaoId){
         window.location.href = "/timeline/" + solicitacaoId;
     }
 
+function retificarSolicitacao(solicitacaoId){
+    const url = '/ajax/ajax-retifica-solicitacao';
 
+    $.ajax({
+        url,
+        type: 'GET',
+        data: { 'solicitacao_id': solicitacaoId },
+        success: function(data) {
+            $("#warning-alert-modal").html(data);
+            $("#warning-alert-modal").modal('show');
+            
+        },
+        error: function(xhr, status, error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Ops!',
+                text: 'Não foi possível obter resultados!'
+            });
+        }
+    });
+}
 </script>
 {% endblock %}

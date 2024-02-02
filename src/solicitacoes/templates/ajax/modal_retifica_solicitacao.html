@@ -1,0 +1,90 @@
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-body p-4">
+            <div>
+                <h4 class="mt-2" style="text-align: center;">Retificar Solicitação</h4>
+                        <div class="row">
+                            <div class="col-12 mb-2">
+                                <label for="titulo" class="form-label">Título</label>
+                                <input class="form-control" value="{{solicitacao.titulo}}" id="titulo" type="text" name="titulo">
+                            </div>
+                            <div class="col-4 mb-2">
+                                <label for="prazo_entrega" class="form-label">Prazo de Entrega</label>
+                                <input class="form-control" value="{{solicitacao.prazo_entrega|date:'Y-d-m'}}" id="prazo_entrega_edit" type="date" name="prazo_entrega_edit">
+                            </div>
+                            <div class="col-4 mb-2">
+                                <label for="prioridade" class="form-label">Prioridade</label>
+                                <select class="form-select select2" id="prioridade">
+                                    <option value="1" {% if solicitacao.prioridade == 1 %} selected {% endif %}>Normal</option>
+                                    <option value="2"  {% if solicitacao.prioridade == 2 %} selected {% endif %}>Urgente</option>
+
+                                </select>
+                            </div>
+                            <div class="col-4 mb-2">
+                                <label for="prioridade" class="form-label">Destino</label>
+                                <select class="form-select select2" id="destino">
+                                    <option value="2" {% if solicitacao.tipo_projeto == 2 %} selected {% endif %}	>COTEC</option>
+                                    <option value="1" {% if solicitacao.tipo_projeto == 1 %} selected {% endif %}	>EFG</option>
+                                    <option value="4" {% if solicitacao.tipo_projeto == 4 %} selected {% endif %}	>BASILEU</option>
+                                    <option value="3" {% if solicitacao.tipo_projeto == 3 %} selected {% endif %}	>CETT</option>
+
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="solicitacaotext" class="form-label">Briefing</label>
+                                    <textarea class="summernote"  id="solicitacaotext" name="solicitacaotext"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mb-3">
+                                
+                                    <button onclick="show_devolve_solicitacao()" style="width: 100%;" type="button" class="btn btn-soft-danger rounded-pill"> <i class="ri-corner-up-left-fill"></i> Devolver Solicitação</button>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mb-3">
+                                
+                                    <button onclick="alteraSolicitacao('{{solicitacao.id}}')" style="width: 100%;" type="button" class="btn btn-soft-success rounded-pill"> <i class="ri-pencil-fill"></i> Alterar Solicitação</button>
+                                </div>
+                            </div>
+
+                            <div class="col-12" id="motivo_devolucao" style="display: none;">
+                                <div class="mb-3">
+                                    <label for="solicitacaotext" class="form-label">Informe o Motivo da Devolução:</label>
+                                    <textarea class="summernote"  id="motivo_devolucao_text" name="motivo_devolucao_text"></textarea>
+                                    <button onclick="devolveSolicitacao('{{solicitacao.id}}')" style="width: 100%;" type="button" class="btn btn-soft-danger rounded-pill mt-2"> <i class="ri-corner-up-left-fill"></i> Confirmar Devolução</button>
+                                </div>
+                            </div>
+                            
+                            
+                        </div>
+                   
+            </div>
+        </div>
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+
+<script>
+
+$(".select2").select2({
+    dropdownParent: $("#warning-alert-modal")
+  });
+ 
+
+
+$('.summernote').summernote(
+    {
+  toolbar: [
+    ['style', ['bold', 'italic', 'underline', 'clear']],
+    ['font', ['strikethrough', 'superscript', 'subscript']],
+    ['para', ['ul', 'ol']],
+
+    // Outras opções de toolbar que você deseja incluir, mas sem 'link'
+  ],
+  // Outras configurações necessárias para o seu uso
+}
+  );
+  var briefing = `{{solicitacao.briefing|safe}}`
+  $('#solicitacaotext').summernote('code', briefing);
+</script>

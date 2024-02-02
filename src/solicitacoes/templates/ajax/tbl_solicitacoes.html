@@ -3,7 +3,7 @@
 
 {% for solicitacao in paginas %}
     
-<tr style="cursor: pointer;"  onclick="acessarSolicitacao('{{solicitacao.id}}')">
+<tr style="cursor: pointer;" {% if perfil.und == 5 %} onclick="modalEntragas('{{solicitacao.id}}')" {% else %} onclick="acessarSolicitacao('{{solicitacao.id}}')" {% endif %}>
     <td>#{{solicitacao.id}}</td>
     <td>{{solicitacao.titulo}}</td>
     <td>{{solicitacao.data_solicitacao|date:'d/m/Y'}}</td>
