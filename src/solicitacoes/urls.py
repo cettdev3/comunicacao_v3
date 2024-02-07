@@ -1,5 +1,5 @@
 from django.urls import include, path
-from solicitacoes.views import Solicitacao,LineTimeline,Paginar,Filter_Solicitacoes,Realizar_Solicitacao,Entregas_Realizadas,Retifica_Solicitacao
+from solicitacoes.views import Solicitacao,LineTimeline,Paginar,Filter_Solicitacoes,Realizar_Solicitacao,Entregas_Realizadas,Retifica_Solicitacao,Retificar_Solicitacao
 
 urlpatterns = [
     path('solicitacoes',  Solicitacao),
@@ -9,5 +9,7 @@ urlpatterns = [
     path('timeline/<codigo>',  LineTimeline),
     path('ajax/ajax-entregas',  Entregas_Realizadas),
     path('ajax/ajax-retifica-solicitacao',  Retifica_Solicitacao),
+    path('ajax/retifica-solicitacao',  Retificar_Solicitacao),
+
 
 ]

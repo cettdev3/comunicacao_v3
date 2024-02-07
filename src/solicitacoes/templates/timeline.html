@@ -37,7 +37,7 @@
                                     <span class="timeline-icon bg-warning-subtle"><i class="ri-record-circle-fill text-warning"></i></span>
                                     <h4 class="mt-0 mb-1 fs-16">{{ item.solicitacao.titulo}}</h4>
                                     <p class="text-muted"><small>{{ item.data|date:"d/m/Y H:i"}}</small></p>
-                                    <p>{{ item.descricao}}</p>
+                                    <p>{{ item.descricao|safe}}</p>
                                     <div>
                                         <h5 class="mt-1 fs-14 mb-0">
                                             <img src="{% static 'layouts/assets/images/users/avatar-3.jpg' %}" alt="Arya S" class="rounded-circle me-2" height="24"> {{item.autor.first_name}} - <small class="badge badge-outline-warning">{{item.cargo}}</small>

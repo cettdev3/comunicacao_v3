@@ -192,6 +192,8 @@ def devolveSolicitacao(request):
 
     solicitacao.save()
 
+    timeline(solicitacao,request.user.id,f'{request.user.first_name} devolveu a solicitação para {solicitacao.autor.first_name}.<br>{motivo}')
+
     return JsonResponse({"success_message": "Solicitação Devolvida!"}, status=200)
 
 @login_required(login_url='/')

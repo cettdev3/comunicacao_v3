@@ -170,9 +170,39 @@ def Entregas_Realizadas(request):
         print(entrega.file_demandas)
     return render(request,'ajax/modal_show_entregas.html',{'entregas':entregas})
 
+@login_required(login_url='/')
 def Retifica_Solicitacao(request):
     solicitacao_id = request.GET.get('solicitacao_id','')
     solicitacao = Solicitacoes.objects.filter(id=solicitacao_id).first()
     arquivos_solicitacoes = Arquivos_Solicitacoes.objects.filter(solicitacao_id = solicitacao_id).all()
     solicitacao.arquivos_solicitacao = arquivos_solicitacoes
     return render(request,'ajax/modal_retifica_solicitacao.html',{'solicitacao':solicitacao})
+
+@login_required(login_url='/')
+def Retificar_Solicitacao(request):
+    with transaction.atomic():
+        id_solicitacao = request.POST.get('solicitacao_id','')
+        titulo = request.POST.get('titulo','')
+        prazo = request.POST.get('prazo','')
+        destino = request.POST.get('destino','')
+        briefing = request.POST.get('briefing','')
+        prioridade = request.POST.get('prioridade','')
+        
+        solicitacao = Solicitacoes.objects.get(id=id_solicitacao)
+        solicitacao.titulo = titulo
+        solicitacao.prazo_entrega = prazo
+        solicitacao.tipo_projeto = destino
+        solicitacao.briefing = briefing
+        solicitacao.prioridade = prioridade
+        solicitacao.status = 1
+        solicitacao.save() 
+
+
+        #obter a peça da solicitação e redefinir para a fazer
+        peca = Pecas.objects.filter(solicitacao_id=id_solicitacao,titulo='Designar Demandas').first()
+
+        #obtem a demanda vinculada a peça acima
+        demanda = Demandas.objects.get(peca_id=peca.id)
+        demanda.status = 1
+        demanda.save()
+        return render(request,'ajax/modal_retifica_solicitacao.html',{'solicitacao':solicitacao})

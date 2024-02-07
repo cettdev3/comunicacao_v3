@@ -4,9 +4,16 @@
             <div>
                 <h4 class="mt-2" style="text-align: center;">Retificar Solicitação</h4>
                         <div class="row">
+                            {% if solicitacao.motivo_devolucao %}
+                            <div class="col-12 mb-2">
+                                <div class="alert alert-danger" role="alert" style="text-align: left;">
+                                    {{solicitacao.motivo_devolucao|safe}}
+                                </div>
+                            </div>
+                            {% endif %}
                             <div class="col-12 mb-2">
                                 <label for="titulo" class="form-label">Título</label>
-                                <input class="form-control" value="{{solicitacao.titulo}}" id="titulo" type="text" name="titulo">
+                                <input class="form-control" value="{{solicitacao.titulo}}" name="titulo_solicitacao" id="titulo_solicitacao" type="text">
                             </div>
                             <div class="col-4 mb-2">
                                 <label for="prazo_entrega" class="form-label">Prazo de Entrega</label>
@@ -22,7 +29,7 @@
                             </div>
                             <div class="col-4 mb-2">
                                 <label for="prioridade" class="form-label">Destino</label>
-                                <select class="form-select select2" id="destino">
+                                <select class="form-select select2" id="destino_und" name="destino_und">
                                     <option value="2" {% if solicitacao.tipo_projeto == 2 %} selected {% endif %}	>COTEC</option>
                                     <option value="1" {% if solicitacao.tipo_projeto == 1 %} selected {% endif %}	>EFG</option>
                                     <option value="4" {% if solicitacao.tipo_projeto == 4 %} selected {% endif %}	>BASILEU</option>
@@ -36,26 +43,13 @@
                                     <textarea class="summernote"  id="solicitacaotext" name="solicitacaotext"></textarea>
                                 </div>
                             </div>
-                            <div class="col-6">
-                                <div class="mb-3">
-                                
-                                    <button onclick="show_devolve_solicitacao()" style="width: 100%;" type="button" class="btn btn-soft-danger rounded-pill"> <i class="ri-corner-up-left-fill"></i> Devolver Solicitação</button>
-                                </div>
-                            </div>
-                            <div class="col-6">
+                            <div class="col-12">
                                 <div class="mb-3">
                                 
                                     <button onclick="alteraSolicitacao('{{solicitacao.id}}')" style="width: 100%;" type="button" class="btn btn-soft-success rounded-pill"> <i class="ri-pencil-fill"></i> Alterar Solicitação</button>
                                 </div>
                             </div>
 
-                            <div class="col-12" id="motivo_devolucao" style="display: none;">
-                                <div class="mb-3">
-                                    <label for="solicitacaotext" class="form-label">Informe o Motivo da Devolução:</label>
-                                    <textarea class="summernote"  id="motivo_devolucao_text" name="motivo_devolucao_text"></textarea>
-                                    <button onclick="devolveSolicitacao('{{solicitacao.id}}')" style="width: 100%;" type="button" class="btn btn-soft-danger rounded-pill mt-2"> <i class="ri-corner-up-left-fill"></i> Confirmar Devolução</button>
-                                </div>
-                            </div>
                             
                             
                         </div>
@@ -66,6 +60,65 @@
 </div><!-- /.modal-dialog -->
 
 <script>
+
+function alteraSolicitacao(solicitacaoId){
+    var XCSRFToken = '{{ csrf_token }}';
+    var titulo = document.getElementById('titulo_solicitacao').value;
+    var prazo = document.getElementById('prazo_entrega_edit').value;
+    var briefing = document.getElementById('solicitacaotext').value;
+    var destino = document.getElementById('destino_und').value;
+    var prioridade = document.getElementById('prioridade').value;
+    console.log(destino)
+    Swal.fire({
+        title: 'Retificar Solicitação',
+        text: 'Deseja realmente retificar esta solicitação? ',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Não'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const url = "/ajax/retifica-solicitacao";
+
+           
+            
+            // Use a função $.ajax do jQuery para fazer a solicitação AJAX
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {'solicitacao_id':solicitacaoId,'titulo':titulo,'destino':destino,'prazo':prazo,'briefing':briefing,'prioridade':prioridade},
+                headers: { "X-CSRFToken": XCSRFToken },
+                success: function (data) {
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Solicitação Retificada!',
+                        text: "Retificação realizada com sucesso!",
+                    }).then((result) => {
+                        // Ação a ser realizada após o botão "OK" ser clicado
+                        if (result.isConfirmed) {
+                            location.reload();
+                           
+                           
+                        }
+                    });                                                                                                                                                                            
+                },
+                error: function (data) {
+                    console.log(data)
+                    if (data.responseJSON && data.responseJSON.error_message) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ops!',
+                            text: data.responseJSON.error_message
+                        });
+                    }
+                }
+            });
+        }
+    });
+}
 
 $(".select2").select2({
     dropdownParent: $("#warning-alert-modal")
