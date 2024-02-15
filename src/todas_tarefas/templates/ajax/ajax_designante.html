@@ -1,4 +1,4 @@
-<option value="Todos">Todos</option>
+<option value="">Todos</option>
 {% for usuario in usuarios %}
-    <option value="{{usuario.id}}">{{usuario.designante.first_name}}</option>
+    <option value="{{usuario.designante_id}}">{{usuario.designante.first_name}}</option>
 {% endfor %}

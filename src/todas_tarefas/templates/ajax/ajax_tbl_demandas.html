@@ -1,0 +1,30 @@
+{% for demanda in demandas %}
+<tr>
+    <td>{{demanda.peca.solicitacao.titulo}}</td>
+    <td>{{demanda.data_designacao|date:"d/m/Y"}}</td>
+    <td>
+        {% if demanda.status == 1 %}
+        <span class="badge badge-outline-primary rounded-pill">{{demanda.get_status_display}}</span>
+        {% elif demanda.status == 2 %}
+        <span class="badge badge-outline-info rounded-pill">{{demanda.get_status_display}}</span>
+        {% elif demanda.status == 3 %}
+        <span class="badge badge-outline-danger rounded-pill">{{demanda.get_status_display}}</span>
+        {% elif demanda.status == 4 %}
+        <span class="badge badge-outline-warning rounded-pill">{{demanda.get_status_display}}</span>
+        {% elif demanda.status == 5 or demanda.status == 6 %}
+        <span class="badge badge-outline-success rounded-pill">{{demanda.get_status_display}}</span>
+        {% endif %}
+    </td>
+    <td>{{demanda.autor.first_name}}</td>
+    <td>{{demanda.designante.first_name}}</td>
+    <td>{{demanda.peca.titulo}}</td>
+    <td>
+        {% if demanda.prioridade == 1 %}
+        <span class="badge badge-outline-primary rounded-pill">{{demanda.get_prioridade_display}}</span>
+        {% else %}
+        <span class="badge badge-outline-danger rounded-pill">{{demanda.get_prioridade_display}}</span>
+        {% endif %}
+    </td>
+    <td><span class="{% if demanda.peca.solicitacao.is_prazo_vencido %}text-danger{% endif %}">{{demanda.peca.solicitacao.prazo_entrega|date:"d/m/Y"}}</span></td>
+</tr>
+{% endfor %}
