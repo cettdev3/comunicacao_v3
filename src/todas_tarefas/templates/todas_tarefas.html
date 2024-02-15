@@ -35,13 +35,14 @@
                     <div class="card-body">
                         <div class="row">
         
-                        <div class="col-3">
+                        <div class="col-5">
                             <div class="mb-3">
-                                <label for="simpleinput" class="form-label">Usuários:</label>
-                                <select class="form-control select2" data-toggle="select2">
-                                      <option>Hérica</option>
-                                    <option>Raquel</option>
-                                    <option>Janaína</option>
+                                <label for="simpleinput" class="form-label">Solicitações:</label>
+                                <select class="form-control select2" data-toggle="select2" name="solicitacoes" id="solicitacoes" onchange="getUserDesignante()">
+                                    <option value="">Todos</option>
+                                    {% for solicitacao in solicitacoes %}
+                                      <option value="{{solicitacao.id}}">{{solicitacao.titulo}}</option>
+                                    {% endfor %}
                                     
                                 </select>
                             </div>
@@ -49,17 +50,34 @@
 
                         <div class="col-3">
                             <div class="mb-3">
-                                <label for="simpleinput" class="form-label">Jobs Relacionados:</label>
-                                <select class="form-control select2" data-toggle="select2">
-                                    <option>Job 1</option>
-                                    <option>Job 1</option>
-                                    <option>Job 2</option>
-                                    <option>Job 3</option>
+                                <label for="simpleinput" class="form-label">Designante:</label>
+                                <select class="form-control select2" data-toggle="select2" name="designante" id="designante">
+          
+                                        <option value="">-</option>
+                         
                                     
                                 </select>
                             </div>
                         </div>
 
+                        <div class="col-3">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Peça:</label>
+                                <select class="form-control select2" data-toggle="select2" name="peca" id="peca">
+          
+                                        <option value="">-</option>
+            
+                                    
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-1">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label"> </label>
+                                <button type="button" class="btn btn-success form-control"><i class="ri-search-line"></i></button>
+                            </div>
+                        </div>
                        
                     </div>
 
@@ -67,154 +85,67 @@
                 </div> <!-- end card-->
             </div>
 
-            <div class="row">
-                <div class="col-12">
-                    <div class="board">
-                        <div class="tasks" data-plugin="dragula" data-containers='["task-list-one", "task-list-two", "task-list-three", "task-list-four"]'>
-                            <h5 class="mt-0 task-header">A FAZER</h5>
+            <div class="col-md-12">
+                <div class="card">
+                    <h5 class="card-header bg-info-subtle">Todas as Demandas</h5>
+                    <div class="card-body">
+                        <div class="row">
+
+                            <table id="scroll-vertical-datatable" class="table table-striped dt-responsive nowrap w-100">
+                                <thead>
+                                    <tr>
+                                        <th>Título</th>
+                                        <th>Designação</th>
+                                        <th>Status</th>
+                                        <th>Autor</th>
+                                        <th>Designante</th>
+                                        <th>Peça</th>
+                                        <th>Prioridade</th>
+                                        <th>Prazo</th>
+                                    </tr>
+                                </thead>
                             
-                            <div id="task-list-one" class="task-list-items">
-
-                                <!-- Task Item -->
-                                <div class="card mb-0" task_id="1">
-                                    <div class="card-body p-3">
-                                        <span class="float-end badge bg-danger-subtle text-danger">Alta</span>
-                                        <small class="text-muted">Prazo: 18/11/2023</small>
-
-                                        <h5 class="my-2 fs-16">
-                                            <a href="#" data-bs-toggle="modal" data-bs-target="#task-detail-modal" class="text-body">Logo EFG EaD</a>
-                                        </h5>
-
-                                        <p class="mb-0">
-                                            <span class="pe-2 text-nowrap mb-2 d-inline-block">
-                                                <i class="ri-briefcase-2-line text-muted"></i>
-                                                0/3
-                                            </span>
-                                            <span class="text-nowrap mb-2 d-inline-block">
-                                                <i class="ri-discuss-line text-muted"></i>
-                                                <b>2</b> Comentários
-                                            </span>
-                                        </p>
-
-                                      
-
-                                        <div class="avatar-group mt-2">
-                                            <a href="javascript: void(0);" class="avatar-group-item"
-                                                data-bs-toggle="tooltip" data-bs-placement="top"
-                                                title="Tosha">
-                                                <img src="{% static 'layouts/assets/images/users/avatar-1.jpg' %}" alt=""
-                                                    class="rounded-circle avatar-xs">
-                                            </a>
-                                           
-                                        </div>
-                                    </div> <!-- end card-body -->
-                                </div>
-                                <!-- Task Item End -->
-
-                                <!-- Task Item -->
-                                <div class="card mb-0" task_id="3">
-                                    <div class="card-body p-3">
-                                        <span class="float-end badge bg-warning-subtle text-warning">Média</span>
-                                        <small class="text-muted">19/08/2023</small>
-
-                                        <h5 class="my-2 fs-16">
-                                            <a href="#" data-bs-toggle="modal" data-bs-target="#task-detail-modal" class="text-body">Templates para abertura e fechamento de videoaulas EFG EaD</a>
-                                        </h5>
-
-                                        <p class="mb-0">
-                                            <span class="pe-2 text-nowrap mb-2 d-inline-block">
-                                                <i class="ri-briefcase-2-line text-muted"></i>
-                                                0/1
-                                            </span>
-                                            <span class="text-nowrap mb-2 d-inline-block">
-                                                <i class="ri-discuss-line text-muted"></i>
-                                                <b>2</b> Comentários
-                                            </span>
-                                        </p>
-
-                                      
-                                        <div class="avatar-group mt-2">
-                                            <a href="javascript: void(0);" class="avatar-group-item"
-                                                data-bs-toggle="tooltip" data-bs-placement="top"
-                                                title="Tosha">
-                                                <img src="{% static 'layouts/assets/images/users/avatar-1.jpg' %}" alt=""
-                                                    class="rounded-circle avatar-xs">
-                                            </a>
-                                           
-                                        </div>
-                                    </div> <!-- end card-body -->
-                                </div>
-                                <!-- Task Item End -->
-
-                                <!-- Task Item -->
-                                <div class="card mb-0" task_id="5">
-                                    <div class="card-body p-3">
-                                        <span class="float-end badge bg-success-subtle text-success">Low</span>
-                                        <small class="text-muted">20/11/2023</small>
-
-                                        <h5 class="my-2 fs-16">
-                                            <a href="#" data-bs-toggle="modal" data-bs-target="#task-detail-modal" class="text-body">SAC redes sociais</a>
-                                        </h5>
-
-                                        <p class="mb-0">
-                                            <span class="pe-2 text-nowrap mb-2 d-inline-block">
-                                                <i class="ri-briefcase-2-line text-muted"></i>
-                                                2/3
-                                            </span>
-                                            <span class="text-nowrap mb-2 d-inline-block">
-                                                <i class="ri-discuss-line text-muted"></i>
-                                                <b>1</b> Comentário
-                                            </span>
-                                        </p>
-
-                                       
-                                        <div class="avatar-group mt-2">
-                                            <a href="javascript: void(0);" class="avatar-group-item"
-                                                data-bs-toggle="tooltip" data-bs-placement="top"
-                                                title="Tosha">
-                                                <img src="{% static 'layouts/assets/images/users/avatar-1.jpg' %}" alt=""
-                                                    class="rounded-circle avatar-xs">
-                                            </a>
-                                           
-                                        </div>
-                                    </div> <!-- end card-body -->
-                                </div>
-                                <!-- Task Item End -->
-                                
-                            </div> <!-- end company-list-1-->
-                        </div>
-
-                        <div class="tasks">
-                            <h5 class="mt-0 task-header text-uppercase">EM PROGRESSO</h5>
                             
-                            <div id="task-list-two" class="task-list-items">
+                                <tbody>
+                                    {% for demanda in demandas %}
+                                    <tr>
+                                        <td>{{demanda.peca.solicitacao.titulo}}</td>
+                                        <td>{{demanda.data_designacao|date:"d/m/Y"}}</td>
+                                        <td>
+                                            {% if demanda.status == 1 %}
+                                            <span class="badge badge-outline-primary rounded-pill">{{demanda.get_status_display}}</span>
+                                            {% elif demanda.status == 2 %}
+                                            <span class="badge badge-outline-info rounded-pill">{{demanda.get_status_display}}</span>
+                                            {% elif demanda.status == 3 %}
+                                            <span class="badge badge-outline-danger rounded-pill">{{demanda.get_status_display}}</span>
+                                            {% elif demanda.status == 4 %}
+                                            <span class="badge badge-outline-warning rounded-pill">{{demanda.get_status_display}}</span>
+                                            {% elif demanda.status == 5 or demanda.status == 6 %}
+                                            <span class="badge badge-outline-success rounded-pill">{{demanda.get_status_display}}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{demanda.autor.first_name}}</td>
+                                        <td>{{demanda.designante.first_name}}</td>
+                                        <td>{{demanda.peca.titulo}}</td>
+                                        <td>
+                                            {% if demanda.prioridade == 1 %}
+                                            <span class="badge badge-outline-primary rounded-pill">{{demanda.get_prioridade_display}}</span>
+                                            {% else %}
+                                            <span class="badge badge-outline-danger rounded-pill">{{demanda.get_prioridade_display}}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td><span class="{% if demanda.peca.solicitacao.is_prazo_vencido %}text-danger{% endif %}">{{demanda.peca.solicitacao.prazo_entrega|date:"d/m/Y"}}</span></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>       
 
-                            
 
-                            </div> <!-- end company-list-2-->
-                        </div>
+                       
+                    </div>
 
-
-                        <div class="tasks">
-                            <h5 class="mt-0 task-header text-uppercase">EM REVISÃO</h5>
-                            <div id="task-list-three" class="task-list-items">
-
-                    
-
-                            </div> <!-- end company-list-3-->
-                        </div>
-
-                        <div class="tasks">
-                            <h5 class="mt-0 task-header text-uppercase">CONCLUÍDO</h5>
-                            <div id="task-list-four" class="task-list-items">
-
-             
-                                
-                            </div> <!-- end company-list-4-->
-                        </div>
-
-                    </div> <!-- end .board-->
-                </div> <!-- end col -->
+                    </div> <!-- end card-body-->
+                </div> <!-- end card-->
             </div>
             <!-- end row-->
             
@@ -574,7 +505,57 @@
     <!-- end Footer -->
 
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
+
+function getUserDesignante(){
+    const url = "/ajax/get-users-designante";
+    var selectedValue = $("#solicitacoes").val();
+    console.log('Entrou')
+    $.ajax({
+        url,
+        type: 'GET',
+        data: { 'solicitacao_id': selectedValue },
+        success: function(data) {
+            $("#designante").html(data);
+            
+        },
+        error: function(xhr, status, error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Ops!',
+                text: 'Não foi possível obter resultados!'
+            });
+        }
+    });
+
+};
+
+function getPecaFilter(){
+    const url = "/ajax/get-peca-filter";
+    var solicitacao = $("#solicitacoes").val();
+    var designante = $("#designante").val();
+
+    console.log('Entrou')
+    $.ajax({
+        url,
+        type: 'GET',
+        data: { 'solicitacao_id': selectedValue,'designante':designante },
+        success: function(data) {
+            $("#peca").html(data);
+            
+        },
+        error: function(xhr, status, error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Ops!',
+                text: 'Não foi possível obter resultados!'
+            });
+        }
+    });
+
+};
+
 function showSelectedFiles() {
     const fileInput = document.getElementById('fileInput');
     const fileDisplay = document.getElementById('fileDisplay');
@@ -619,5 +600,7 @@ function removeFile(index) {
     // Atualize a lista de arquivos selecionados
     showSelectedFiles();
 }
+
+
 </script>
 {% endblock %}

@@ -63,6 +63,9 @@ class Solicitacoes(models.Model):
     def get_projeto_display(self):
         return dict(self.choice_projeto)[self.tipo_projeto]
 
+    def is_prazo_vencido(self):
+        return self.prazo_entrega < timezone.now().date()
+    
     class Meta:
         db_table = 'solicitacoes'
 
@@ -93,6 +96,8 @@ class Demandas(models.Model):
     def get_status_display(self):
         return dict(self.choice_status)[self.status]
     
+    def get_prioridade_display(self):
+        return dict(self.choice_prioridade)[self.prioridade]
     class Meta:
         db_table = 'demandas'
 
