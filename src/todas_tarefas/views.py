@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from solicitacoes.models import Demandas,Solicitacoes
 from django.contrib.auth.models import User
+from django.http import JsonResponse
+from repositorio.models import Arquivos_Demandas
 
 # Create your views here.
 @login_required(login_url='/')
@@ -38,3 +40,17 @@ def Get_Peca_Filter(request):
     else:
         demandas = Demandas.objects.all()
     return render(request, 'ajax/ajax_tbl_demandas.html', {'demandas': demandas})
+
+@login_required(login_url='/')
+def Get_Modal_task(request):
+    demanda_id = request.GET.get('demanda_id')
+    
+    if demanda_id:
+        demandas = Demandas.objects.filter(id=demanda_id).first()
+        arquivos_demandas = Arquivos_Demandas.objects.filter(demanda_id=demanda_id).all()
+        demandas.arquivos_demandas = arquivos_demandas
+        return render(request, 'ajax/modal_task.html', {'demanda': demandas})
+       
+    else:
+        return JsonResponse({"error_message": "Solicitação Devolvida!"}, status=400)
+    

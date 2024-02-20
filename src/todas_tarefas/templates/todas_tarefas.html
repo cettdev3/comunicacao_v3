@@ -11,6 +11,8 @@
     cursor: pointer;
     color: red;
 }
+
+
 </style>
 <div class="content-page">
     <div class="content">
@@ -98,7 +100,7 @@
                             
                                 <tbody id="tbl_demandas">
                                     {% for demanda in demandas %}
-                                    <tr>
+                                    <tr onclick="OpenModalTask('{{demanda.id}}')" style="cursor: pointer; ">
                                         <td>{{demanda.peca.solicitacao.titulo}}</td>
                                         <td>{{demanda.data_designacao|date:"d/m/Y"}}</td>
                                         <td>
@@ -142,65 +144,9 @@
         </div> <!-- container -->
 
     </div> <!-- content -->
-    <div class="modal fade task-modal-content" id="task-detail-modal" tabindex="-1" role="dialog" aria-labelledby="TaskDetailModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="TaskDetailModalLabel">Logo EFG EaD<span class="badge bg-danger ms-2">Alta</span></h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    
-                    <div class="p-2">
-                      
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="mb-4">
-                                    <h5>Data de Criação</h5>
-                                    <p>17/11/2023 <small class="text-muted">10:15</small></p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-4">
-                                    <h5>Prazo de Entrega</h5>
-                                    <p>220/11/2023 <small class="text-muted">10:15</small></p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-4" id="tooltip-container">
-                                    <h5>Solicitante:</h5>
-                                    <div class="avatar-group mt-1">
-                                        <a href="javascript: void(0);" class="avatar-group-item"
-                                            data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="Tosha">
-                                            <img src="{% static 'layouts/assets/images/users/avatar-1.jpg' %}" alt=""
-                                                class="rounded-circle avatar-xs">
-                                        </a>
-                                      
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- end row-->
-
-                    </div> <!-- .p-2 -->
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
 
     <div class="modal fade" id="bs-example-modal-lg"  aria-labelledby="myLargeModalLabel" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="myLargeModalLabel">Large modal</h4>
-                    <button type="button" class="btn-close"data-bs-toggle="modal" data-bs-target="#task-detail-modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    ...
-                </div>
-            </div><!-- /.modal-content --> 
-        </div><!-- /.modal-dialog -->
+      
     </div>
 
     <!-- Footer Start -->
@@ -225,6 +171,27 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
+function OpenModalTask(demanda_id){
+    const url = '/ajax/modal-task';
+
+    $.ajax({
+        url,
+        type: 'GET',
+        data: { 'demanda_id': demanda_id },
+        success: function(data) {
+            $("#bs-example-modal-lg").html(data);
+            $("#bs-example-modal-lg").modal('show');
+            
+        },
+        error: function(xhr, status, error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Ops!',
+                text: 'Não conseguimos encontrar esta demanda!'
+            });
+        }
+    });
+}
 
 function getUserDesignante(){
     const url = "/ajax/get-users-designante";
@@ -319,6 +286,259 @@ function removeFile(index) {
     showSelectedFiles();
 }
 
+function acaoDemanda(demandaID,status){
+    var XCSRFToken = '{{ csrf_token }}';
+    var motivo = document.getElementById('motivo_revisao_text').value;
+    
+
+    if (status == '3') {
+        if(motivo == ""){
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Por favor, informe o motivo da revisão!',
+
+        });
+
+    }else{
+        Swal.fire({
+        title: 'Revisar Demanda',
+        text: 'Deseja realmente solicitar a revisão desta demanda?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Não'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const url = "/ajax/acoes-demanda";
+
+           
+            
+            // Use a função $.ajax do jQuery para fazer a solicitação AJAX
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {'demandaID':demandaID,'motivo':motivo,'status':status},
+                headers: { "X-CSRFToken": XCSRFToken },
+                success: function (data) {
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Demanda em Revisão!',
+                        text: "A demanda foi enviada para o usuário revisar!",
+                    }).then((result) => {
+                        // Ação a ser realizada após o botão "OK" ser clicado
+                        if (result.isConfirmed) {
+                            location.reload();
+                           
+                           
+                        }
+                    });                                                                                                                                                                            
+                },
+                error: function (data) {
+                    console.log(data)
+                    if (data.responseJSON && data.responseJSON.error_message) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ops!',
+                            text: data.responseJSON.error_message
+                        });
+                    }
+                }
+            });
+        }
+        })
+        }
+    }
+
+    if (status == '5') {
+
+        Swal.fire({
+        title: 'Aprovar Demanda',
+        text: 'Deseja realmente aprovar a demanda?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Não'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const url = "/ajax/acoes-demanda";
+
+           
+            
+            // Use a função $.ajax do jQuery para fazer a solicitação AJAX
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {'demandaID':demandaID,'motivo':'','status':status},
+                headers: { "X-CSRFToken": XCSRFToken },
+                success: function (data) {
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Demanda Aprovada!',
+                        text: "A demanda foi aprovada com sucesso!",
+                    }).then((result) => {
+                        // Ação a ser realizada após o botão "OK" ser clicado
+                        if (result.isConfirmed) {
+                            location.reload();
+                           
+                           
+                        }
+                    });                                                                                                                                                                            
+                },
+                error: function (data) {
+                    console.log(data)
+                    if (data.responseJSON && data.responseJSON.error_message) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ops!',
+                            text: data.responseJSON.error_message
+                        });
+                    }
+                }
+            });
+        }
+    });
+    
+
+    }
+    
+    if (status == '6') {
+
+        Swal.fire({
+        title: 'Enviar P/ Solicitante',
+        text: 'Deseja realmente entregar para o solicitante?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Não'
+        }).then((result) => {
+        if (result.isConfirmed) {
+            const url = "/ajax/acoes-demanda";
+
+        
+            
+            // Use a função $.ajax do jQuery para fazer a solicitação AJAX
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {'demandaID':demandaID,'motivo':'','status':status},
+                headers: { "X-CSRFToken": XCSRFToken },
+                success: function (data) {
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Entrega Realizada!',
+                        text: "A demanda foi entregue com sucesso!",
+                    }).then((result) => {
+                        // Ação a ser realizada após o botão "OK" ser clicado
+                        if (result.isConfirmed) {
+                            location.reload();
+                        
+                        
+                        }
+                    });                                                                                                                                                                            
+                },
+                error: function (data) {
+                    console.log(data)
+                    if (data.responseJSON && data.responseJSON.error_message) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ops!',
+                            text: data.responseJSON.error_message
+                        });
+                    }
+                }
+            });
+        }
+        });
+
+
+        }
+
+
+    if (status == '1') {
+        console.log(status)
+        Swal.fire({
+        title: 'Reabrir Demanda',
+        text: 'Deseja realmente reabrir esta demanda?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Não'
+        }).then((result) => {
+        if (result.isConfirmed) {
+            const url = "/ajax/acoes-demanda";
+
+        
+            
+            // Use a função $.ajax do jQuery para fazer a solicitação AJAX
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {'demandaID':demandaID,'motivo':'','status':status},
+                headers: { "X-CSRFToken": XCSRFToken },
+                success: function (data) {
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Demanda Reaberta!',
+                        text: "A demanda foi reaberta com sucesso!",
+                    }).then((result) => {
+                        // Ação a ser realizada após o botão "OK" ser clicado
+                        if (result.isConfirmed) {
+                            location.reload();
+                        
+                        
+                        }
+                    });                                                                                                                                                                            
+                },
+                error: function (data) {
+                    console.log(data)
+                    if (data.responseJSON && data.responseJSON.error_message) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ops!',
+                            text: data.responseJSON.error_message
+                        });
+                    }
+                }
+            });
+        }
+        });
+
+
+        }
+
+    }
+
+
+function revisaoDemanda(){
+    var elemento = document.getElementById("motivo_revisao");
+    elemento.style.display = 'block';
+}
+
+$('.summernote').summernote(
+    {
+  toolbar: [
+    ['style', ['bold', 'italic', 'underline', 'clear']],
+    ['font', ['strikethrough', 'superscript', 'subscript']],
+    ['para', ['ul', 'ol']],
+
+    // Outras opções de toolbar que você deseja incluir, mas sem 'link'
+  ],
+  // Outras configurações necessárias para o seu uso
+}
+  );
 
 </script>
 {% endblock %}

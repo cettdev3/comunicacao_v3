@@ -1,0 +1,139 @@
+{% load static %}
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title" id="myLargeModalLabel">{{ demanda.peca.solicitacao.titulo }} - Demanda P/ {{ demanda.designante.first_name }}</h4>
+            <button type="button" class="btn-close"data-bs-toggle="modal" data-bs-target="#task-detail-modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="mb-4">
+                            <h5>Data de Criação</h5>
+                            <span>{{demanda.peca.solicitacao.data_solicitacao|date:"d/m/Y"}} <small class="text-muted">{{solicitacao.data_solicitacao|date:"H:i:s"}}</small></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-4">
+                            <h5>Prazo de Entrega</h5>
+                            <span>{{demanda.peca.solicitacao.prazo_entrega|date:"d/m/Y"}}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-4">
+                            <h5>Data da Entrega:</h5>
+                            {% if demanda.data_entrega %}
+                            <span>
+                                {{demanda.data_entrega|date:"d/m/Y"}}
+                            </span>
+                                
+                            {% else %}
+                            <span class="badge badge-outline-danger rounded-pill">Entrega Pendente</span>
+                            {% endif %}
+                         
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-4" id="tooltip-container">
+                            <h5>Solicitante:</h5>
+                            <div class="avatar-group mt-1">
+                                <a href="javascript: void(0);" class="avatar-group-item">
+                                    <img src="{% static 'layouts/assets/images/users/avatar-1.jpg' %}" alt=""
+                                        class="rounded-circle avatar-xs">
+                                </a> <span style="padding: 5px 5px;">{{demanda.peca.solicitacao.autor.first_name}}</span>
+                              
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card border-primary border">
+                        <div class="col-12">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">Briefing</h5>
+                                <span>{{demanda.peca.solicitacao.briefing|safe}}</span>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="card border-secondary border">
+                        <div class="card-body">
+                            <h5 class="card-title text-success">Descrição da Entrega</h5>
+                        {% if demanda.descricao_entrega %}
+                            <p class="card-text">{{demanda.descricao_entrega|safe}}</p>
+                        {% else %}
+                            <p class="card-text">Nenhuma descrição informada</p>
+                        {% endif %}
+                        </div> <!-- end card-body-->
+                        
+                    </div> 
+        
+                    <div class="card border-secondary border">
+                        <div class="card-body">
+                            <h5 class="card-title text-success">Arquivos Anexados</h5>
+                            {% if demanda.arquivos_demandas %}
+                            <div class="row">
+                                {% for arquivo in demanda.arquivos_demandas %}
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <a style="width: 100%;" href="{{arquivo.rota}}" class="btn btn-soft-secondary">
+                                            <i class="ri-file-fill"></i><br>{{ arquivo.rota|cut:"/media/" }}
+                                        </a>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                               
+                            </div>
+                            
+                                
+                                
+                                
+                            {% else %}
+                                <p class="card-text">Nenhum arquivo anexado</p>
+                    {% endif %}
+        
+                        </div> <!-- end card-body-->
+                        
+                    </div> 
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <button {% if demanda.status != 5 and demanda.status != 6 %} disabled {% endif %} style="width: 100%;" type="button" onclick="acaoDemanda('{{demanda.id}}','1')" class="btn btn-danger"><i class="ri-corner-up-left-line me-1"></i> <span>Reabrir Demanda</span> </button>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <button  {% if demanda.status != 4 %} disabled {% endif %} style="width: 100%;" type="button" onclick="revisaoDemanda('{{demanda.id}}')" class="btn btn-warning"><i class="ri-draft-line me-1"></i> <span>Solicitar Revisão</span> </button>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3">
+                                {% if demanda.designante_id == request.user.id and perfil.und != 5 and demanda.status < 5 %}
+                                <button style="width: 100%;" type="button" onclick="acaoDemanda('{{demanda.id}}','5')" class="btn btn-success"><i class="ri-check-double-line me-1"></i> <span>Aprovar Demanda</span> </button>
+                                {% else %}
+                                    {% if demanda.status == 5 and demanda.designante_id != request.user.id %}
+                                    <button  style="width: 100%;" type="button" onclick="acaoDemanda('{{demanda.id}}','6')" class="btn btn-success"><i class="ri-check-double-line me-1"></i> <span>Enviar P/ Solicitante</span> </button>
+                                    {% else %}
+                                    <button {% if demanda.status != 4 %} disabled {% endif %} style="width: 100%;" type="button" onclick="acaoDemanda('{{demanda.id}}','5')" class="btn btn-success"><i class="ri-check-double-line me-1"></i> <span>Aprovar Demanda</span> </button>
+                                    {% endif %}
+                                {% endif %}
+        
+                            </div>
+                        </div>
+        
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <div class="col-12" id="motivo_revisao" style="display: none;">
+                                    <div class="mb-3">
+                                        <label for="solicitacaotext" class="form-label">Informe o Motivo da Revisão:</label>
+                                        <textarea class="summernote"  id="motivo_revisao_text" name="motivo_revisao_text"></textarea>
+                                        <button onclick="acaoDemanda('{{demanda.id}}','3')" style="width: 100%;" type="button" class="btn btn-soft-danger rounded-pill mt-2"> <i class="ri-corner-up-left-fill"></i> Solicitar Revisão</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            </div>
+        </div>
+    </div><!-- /.modal-content --> 
+</div><!-- /.modal-dialog -->

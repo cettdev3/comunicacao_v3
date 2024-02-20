@@ -90,6 +90,7 @@ class Demandas(models.Model):
     data_designacao = models.DateField(default=timezone.now, null=True, blank=True) 
     prioridade = models.IntegerField(choices=choice_prioridade,null=False,blank=False,default=1)
     descricao_entrega = models.TextField(null=False,blank=False,default="Nenhuma Descrição de Entrega")
+    data_entrega = models.DateField(default=timezone.now, null=True, blank=True) 
     devolutiva = models.TextField(null=False,blank=False,default="")
     status = models.IntegerField(choices=choice_status,null=False,blank=False)
 
