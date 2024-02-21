@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from solicitacoes.models import Demandas,Solicitacoes
+from solicitacoes.models import Demandas,Solicitacoes,Pecas
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from repositorio.models import Arquivos_Demandas
@@ -54,3 +54,37 @@ def Get_Modal_task(request):
     else:
         return JsonResponse({"error_message": "Solicitação Devolvida!"}, status=400)
     
+
+@login_required(login_url='/')
+def Jobs_Individual(request):
+    demandas = Demandas.objects.filter(designante_id = request.user.id).all()
+    demandas_list = []
+    demandas_append = []
+    for demanda in demandas:
+        print(demanda.peca.solicitacao.titulo)
+        if demanda.peca.solicitacao.titulo not in demandas_append:
+            demandas_append.append( demanda.peca.solicitacao.titulo)
+            demandas_list.append(demanda)
+    return render(request,'jobs_individuais.html',{'demandas':demandas,'demandas_list':demandas_list})
+
+@login_required(login_url='/')
+def Get_Pecas(request):
+    solicitacao_id = request.GET.get('solicitacao_id',"")
+    if solicitacao_id:
+        pecas = Pecas.objects.filter(solicitacao_id = solicitacao_id).all()
+    else:
+        pecas =[]
+    return render(request,'ajax/ajax_get_pecas.html',{'pecas':pecas})
+
+@login_required(login_url='/')
+def Get_Pecas_Individual(request):
+    peca = request.GET.get('peca_id','')
+    solicitacao = request.GET.get('solicitacao_id','')
+    if peca:
+        demandas = Demandas.objects.filter(peca_id=peca,designante_id = request.user.id).all()
+
+    else:
+        demandas = Demandas.objects.filter(designante_id=request.user.id,peca_id__solicitacao_id=solicitacao).all(
+            
+        )
+    return render(request, 'ajax/ajax_tbl_demandas.html', {'demandas': demandas})
