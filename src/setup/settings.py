@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'todas_tarefas',
     'repositorio',
     'perfil',
+    'gerir_time'
     
 
 ]

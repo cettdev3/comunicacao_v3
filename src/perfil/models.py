@@ -15,5 +15,8 @@ class Perfil(models.Model):
 
     def get_cargo_display(self):
         return dict(self.choice_cargo)[self.cargo]
+    
+    def get_und_display(self):
+        return dict(self.choice_und)[self.und]
     class Meta:
         db_table = 'perfil'

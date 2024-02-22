@@ -27,6 +27,7 @@ urlpatterns = [
     path('', include('minhas_tarefas.urls')),
     path('', include('todas_tarefas.urls')),
     path('', include('repositorio.urls')),
+    path('', include('gerir_time.urls')),
 
 
 
