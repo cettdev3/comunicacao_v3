@@ -40,7 +40,11 @@
                                     <p>{{ item.descricao|safe}}</p>
                                     <div>
                                         <h5 class="mt-1 fs-14 mb-0">
-                                            <img src="{% static 'layouts/assets/images/users/avatar-3.jpg' %}" alt="Arya S" class="rounded-circle me-2" height="24"> {{item.autor.first_name}} - <small class="badge badge-outline-warning">{{item.cargo}}</small>
+                                            {% if item.foto %}
+                                                <img src="{{item.foto}}" alt="Arya S" class="rounded-circle me-2" height="24" width="24"> {{item.autor.first_name}} - <small class="badge badge-outline-warning">{{item.cargo}}</small>
+                                            {% else %}
+                                                <img src="{% static 'layouts/assets/images/users/avatar-1.jpg' %}"  class="rounded-circle me-2" height="24" width="24"> {{item.autor.first_name}} - <small class="badge badge-outline-warning">{{item.cargo}}</small>
+                                            {% endif %}
                                         </h5>
                                     </div>
 

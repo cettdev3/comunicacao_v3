@@ -1,5 +1,5 @@
 {% for demanda in demandas %}
-<tr>
+<tr onclick="OpenModalTask('{{demanda.id}}')" style="cursor: pointer; ">
     <td>{{demanda.peca.solicitacao.titulo}}</td>
     <td>{{demanda.data_designacao|date:"d/m/Y"}}</td>
     <td>

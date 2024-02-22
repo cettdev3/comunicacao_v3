@@ -282,11 +282,11 @@
                         <li class="dropdown me-md-2">
                             <a class="nav-link dropdown-toggle arrow-none nav-user px-2" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                                 <span class="account-user-avatar">
-                                    <img src="{% static 'layouts/assets/images/users/avatar-1.jpg' %}" alt="user-image" width="32" class="rounded-circle">
+                                    <img src="{{foto.foto}}" id="avatar_topo" alt="user-image" width="42" height="42" class="rounded-circle">
                                 </span>
                                 <span class="d-lg-flex flex-column gap-1 d-none">
-                                    <h5 class="my-0">Comunicação</h5>
-                                    <h6 class="my-0 fw-normal">Gerente</h6>
+                                    <h5 class="my-0">{{request.user.first_name}}</h5>
+                                    <h6 class="my-0 fw-normal">{{foto.get_cargo_display}}</h6>
                                 </span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
@@ -348,11 +348,11 @@
                     <div class="leftbar-user p-3 text-white">
                         <a href="pages-profile.html" class="d-flex align-items-center text-reset">
                             <div class="flex-shrink-0">
-                                <img src="{% static 'layouts/assets/images/users/avatar-1.jpg' %} " alt="user-image" height="42" class="rounded-circle shadow">
+                                <img src="{{foto.foto}}" id="avatar_sidebar" alt="user-image" height="42" width="42" class="rounded-circle shadow">
                             </div>
                             <div class="flex-grow-1 ms-2">
-                                <span class="fw-semibold fs-15 d-block">Comunicação</span>
-                                <span class="fs-13">Gerente</span>
+                                <span class="fw-semibold fs-15 d-block">{{request.user.first_name}}</span>
+                                <span class="fs-13">{{foto.get_cargo_display}}</span>
                             </div>
                            
                         </a>
@@ -423,18 +423,21 @@
                         <h4 class="modal-title" id="standard-modalLabel">Configurações</h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+                    <form id="form_foto" method="POST"  enctype="multipart/form-data">
+                        {% csrf_token %}
                     <div class="modal-body">
                         <div class="col-12">
                             <div class="mb-3">
                                 <label for="simpleinput" class="form-label">Foto: </label>
-                                <input type="file" id="example-fileinput" class="form-control">
+                                <input type="file" id="foto_input"  name="foto_input" class="form-control">
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Fechar</button>
-                        <button type="button" class="btn btn-primary">Atualizar Foto</button>
+                        <button type="button" onclick="alterar_foto()" class="btn btn-primary">Atualizar Foto</button>
                     </div>
+                    </form>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div>
@@ -493,6 +496,49 @@
             
         
     </body>
+<script>
 
+    function alterar_foto(){
+        var XCSRFToken = '{{ csrf_token }}';
+        var form = document.getElementById("form_foto");
+        var formData = new FormData(form);  // Use FormData para incluir campos de arquivo]
+
+        var fileInput = document.getElementById('foto_input');
+        
+        if (fileInput){
+        for (var i = 0; i < fileInput.files.length; i++) {
+            console.log(fileInput.files[i])
+            formData.append('files[]', fileInput.files[i]);
+        }
+        }
+
+        console.log(formData)
+        const url = '/ajax/atualizar-foto';
+
+        $.ajax({
+            url,
+            type: 'POST',
+            data: formData,
+            headers: { "X-CSRFToken": XCSRFToken },
+            processData: false,  // Não processar os dados (o FormData já cuida disso)
+            contentType: false,  // Não definir o tipo de conteúdo (o FormData já cuida disso),
+            success: function(data) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sucesso!',
+                    text: 'Alteração realizada com sucesso!'
+                });
+                
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ops!',
+                    text: 'Não foi possível obter resultados!'
+                });
+            }
+        });
+    }
+</script>
 <!-- Mirrored from coderthemes.com/jidox/layouts/ by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 16 Nov 2023 12:13:51 GMT -->
 </html>

@@ -51,7 +51,8 @@ def Minhas_Tarefas(request):
         solicitacao.demandas_analise = demandas_analise
         solicitacao.demandas_entregues = demandas_entregues
         
-    return render(request,'minhas_tarefas.html',{'solicitacoes':solicitacoes})
+        foto =  Perfil.objects.filter(user_profile_id = request.user.id).first()
+    return render(request,'minhas_tarefas.html',{'solicitacoes':solicitacoes,'foto':foto})
 
 @login_required(login_url='/')
 def Show_Modal_Task(request):

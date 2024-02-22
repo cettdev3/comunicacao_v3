@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from solicitacoes.models import Demandas,Solicitacoes,Pecas
+from solicitacoes.models import Demandas,Solicitacoes,Pecas,Perfil
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from repositorio.models import Arquivos_Demandas
@@ -11,7 +11,8 @@ def Todas_Tarefas(request):
     demandas = Demandas.objects.all()
     solicitacoes = Solicitacoes.objects.all()
     usuarios = User.objects.all()
-    return render(request,'todas_tarefas.html',{'demandas':demandas,'solicitacoes':solicitacoes,'usuarios':usuarios})
+    foto =  Perfil.objects.filter(user_profile_id = request.user.id).first()
+    return render(request,'todas_tarefas.html',{'demandas':demandas,'solicitacoes':solicitacoes,'usuarios':usuarios,'foto':foto})
 
 @login_required(login_url='/')
 def Get_Users_Designante(request):
@@ -49,7 +50,8 @@ def Get_Modal_task(request):
         demandas = Demandas.objects.filter(id=demanda_id).first()
         arquivos_demandas = Arquivos_Demandas.objects.filter(demanda_id=demanda_id).all()
         demandas.arquivos_demandas = arquivos_demandas
-        return render(request, 'ajax/modal_task.html', {'demanda': demandas})
+        foto =  Perfil.objects.filter(user_profile_id = demandas.autor_id).first()
+        return render(request, 'ajax/modal_task.html', {'demanda': demandas,'foto':foto})
        
     else:
         return JsonResponse({"error_message": "Solicitação Devolvida!"}, status=400)
@@ -65,7 +67,8 @@ def Jobs_Individual(request):
         if demanda.peca.solicitacao.titulo not in demandas_append:
             demandas_append.append( demanda.peca.solicitacao.titulo)
             demandas_list.append(demanda)
-    return render(request,'jobs_individuais.html',{'demandas':demandas,'demandas_list':demandas_list})
+    foto =  Perfil.objects.filter(user_profile_id = request.user.id).first()
+    return render(request,'jobs_individuais.html',{'demandas':demandas,'demandas_list':demandas_list,'foto':foto})
 
 @login_required(login_url='/')
 def Get_Pecas(request):

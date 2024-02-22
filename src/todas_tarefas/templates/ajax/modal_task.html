@@ -39,9 +39,15 @@
                             <h5>Solicitante:</h5>
                             <div class="avatar-group mt-1">
                                 <a href="javascript: void(0);" class="avatar-group-item">
-                                    <img src="{% static 'layouts/assets/images/users/avatar-1.jpg' %}" alt=""
+                                    {% if foto.foto %}
+                                        <img src="{{foto.foto}}" alt=""
                                         class="rounded-circle avatar-xs">
-                                </a> <span style="padding: 5px 5px;">{{demanda.peca.solicitacao.autor.first_name}}</span>
+                                    {% else %}
+                                    <img src="{% static 'layouts/assets/images/users/avatar-1.jpg' %}" alt=""
+                                    class="rounded-circle avatar-xs">
+                                    {% endif %}
+                                  
+                                </a> <span style="padding: 5px 5px;">{{demanda.autor.first_name}}</span>
                               
                             </div>
                         </div>

@@ -38,7 +38,8 @@ def Solicitacao(request):
     page_num = request.GET.get('pagina')
     page = solicitacoes_paginators.get_page(page_num)
     perfil = Perfil.objects.filter(user_profile=request.user).first()
-    return render(request,'solicitacoes.html',{'paginas':page,'solicitacoes':solicitacoes,'perfil':perfil})
+    foto = Perfil.objects.filter(user_profile=request.user).first()
+    return render(request,'solicitacoes.html',{'paginas':page,'solicitacoes':solicitacoes,'perfil':perfil,'foto':foto})
 
 @login_required(login_url='/')
 def Paginar(request):
@@ -156,7 +157,14 @@ def Realizar_Solicitacao(request):
 @login_required(login_url='/')
 def LineTimeline(request,codigo):
     itens = Timeline.objects.filter(solicitacao_id=codigo).all().order_by('-id')
-    return render(request,'timeline.html',{'itens':itens})	
+    for item in itens:
+        perfil = Perfil.objects.filter(user_profile_id = item.autor_id).first()
+        item.foto = perfil.foto
+
+    foto =  Perfil.objects.filter(user_profile_id = request.user.id).first()
+
+    
+    return render(request,'timeline.html',{'itens':itens,'foto':foto})	
 
 @login_required(login_url='/')
 def Entregas_Realizadas(request):
