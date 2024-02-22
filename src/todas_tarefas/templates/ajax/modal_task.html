@@ -40,11 +40,9 @@
                             <div class="avatar-group mt-1">
                                 <a href="javascript: void(0);" class="avatar-group-item">
                                     {% if foto.foto %}
-                                        <img src="{{foto.foto}}" alt=""
-                                        class="rounded-circle avatar-xs">
+                                    <img src="{{foto.foto}}" id="avatar_topo" alt="user-image" width="36" height="36" class="rounded-circle">
                                     {% else %}
-                                    <img src="{% static 'layouts/assets/images/users/avatar-1.jpg' %}" alt=""
-                                    class="rounded-circle avatar-xs">
+                                    <img src="https://ui-avatars.com/api/?name={{demanda.autor.first_name}}&color=7F9CF5&background=EBF4FF" id="avatar_topo" alt="user-image" width="36" height="36" class="rounded-circle">
                                     {% endif %}
                                   
                                 </a> <span style="padding: 5px 5px;">{{demanda.autor.first_name}}</span>
