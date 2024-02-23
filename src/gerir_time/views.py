@@ -5,6 +5,19 @@ from django.contrib.auth.decorators import login_required
 from perfil.models import Perfil
 from django.db import transaction
 
+def get_und(und,usuario,request):
+    unidade = Perfil.objects.filter(und = und).count()
+    if unidade > 0:
+        usuario_unidade = Perfil.objects.filter(und = und, user_profile = usuario).first()
+        if usuario_unidade:
+            usuario_unidade = usuario_unidade.user_profile_id
+        else:
+            cria_perfil = Perfil.objects.create(user_profile_id = usuario,und = 5,cargo = 6)
+        if und < 5 and unidade > 0 and usuario_unidade != int(usuario):
+            return True
+        else:
+            return False
+
 # Create your views here.
 @login_required(login_url='/')
 def Gerir_Time(request):
@@ -73,35 +86,45 @@ def Alterar_Usuario(request):
     cargo = request.POST.get('cargo_modal','')
     unidade = request.POST.get('unidade_modal','')
 
-    if unidade:
-        und_cadastrada = Perfil.objects.filter(und=unidade).first()
-    else:
-        und_cadastrada = None
-
-    if und_cadastrada and int(unidade) < 5 and und_cadastrada.user_profile_id != request.user.id:
+    status_und = get_und(int(unidade),user_id,request)
+    if status_und:
         return JsonResponse({'erro': 'Não foi possível criar o usuário. A unidade já está vinculada a um outro usuário!'}, status=400)
     else:
-        try:
-            with transaction.atomic():
-                usuario = User.objects.get(id=user_id)
-                usuario.first_name = nome
-                usuario.email = email
-                if password:
-                    usuario.password = password
-                usuario.save()
-                perf = Perfil.objects.filter(user_profile_id = usuario.id).first()
-                if perf:
-                    perf.cargo = cargo
-                    perf.und = unidade
-                    perf.save()
+        #VERIFICA SE POSSUI PERFIL CADASTRADO
+        perfil_cadastrado = Perfil.objects.filter(user_profile_id=user_id).exists()
+        
+        #SE NÃO EXISTIR PERFIL CADASTRADO
+        if not perfil_cadastrado:
 
-            usuarios = User.objects.all()
-            for usuario in usuarios:
-                perfil = Perfil.objects.filter(user_profile_id = usuario.id).first()
-                usuario.perfil = perfil
-                usuario.save()
-            foto = Perfil.objects.filter(user_profile_id = request.user.id).first()
-            return render(request,'ajax/tbl_usuarios.html',{'usuarios':usuarios,'foto': foto})
-        except Exception as e:
-            print(e)	
-            return JsonResponse({'erro': 'Usuário ja existe!'}, status=400)
+            #CADASTRA PERFIL
+            perfil = Perfil.objects.create(user_profile_id=user_id, cargo=cargo, und=unidade)
+
+            usuario = User.objects.get(id=user_id)
+            usuario.first_name = nome
+            usuario.email = email
+            if password:
+                usuario.password = password
+            usuario.save()
+
+        
+        else:
+
+            #ALTERA PERFIL
+            perfil = Perfil.objects.filter(user_profile_id=user_id).update(cargo=cargo, und=unidade)
+
+            usuario = User.objects.get(id=user_id)
+            usuario.first_name = nome
+            usuario.email = email
+            if password:
+                usuario.password = password
+            usuario.save()
+
+        usuarios = User.objects.all()
+        for usuario in usuarios:
+            perfil = Perfil.objects.filter(user_profile_id = usuario.id).first()
+            usuario.perfil = perfil
+            usuario.save()
+        foto = Perfil.objects.filter(user_profile_id = request.user.id).first()
+        return render(request,'ajax/ajax_tbl_user.html',{'usuarios':usuarios,'foto': foto})
+
+    
