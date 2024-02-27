@@ -27,7 +27,8 @@ def Gerir_Time(request):
         usuario.perfil = perfil
         usuario.save()
     foto = Perfil.objects.filter(user_profile_id = request.user.id).first()
-    return render(request,'gerir_time.html',{'usuarios':usuarios,'foto':foto})
+    perm = foto.cargo
+    return render(request,'gerir_time.html',{'usuarios':usuarios,'foto':foto, 'perm':perm})
 
 @login_required(login_url='/')
 def Cadastrar_Usuario(request):
@@ -73,7 +74,6 @@ def Get_User(request):
 
     perfil = Perfil.objects.filter(user_profile_id = usuario.id).first()
     usuario.perfil = perfil
-
     return render(request,'ajax/tbl_usuarios.html',{'usuario':usuario})
 
 @login_required(login_url='/')

@@ -25,13 +25,14 @@
                     <div class="col-md-4">
                         <div class="mb-4" id="tooltip-container">
                             <h5>Solicitante:</h5>
-                            <div class="avatar-group mt-1">
-                                <a href="javascript: void(0);" class="avatar-group-item">
-                                    <img src="{% static 'layouts/assets/images/users/avatar-1.jpg' %}" alt=""
-                                        class="rounded-circle avatar-xs">
-                                </a> <span style="padding: 5px 5px;">{{solicitacao.autor.first_name}}</span>
-                              
-                            </div>
+                            <div id="tooltip-container3">
+                                {% if solicitacao.perfil.foto %}
+                                    <img src="{{foto.foto}}" id="avatar_topo" alt="user-image" width="36" height="36" class="avatar-xs rounded-circle me-1"> {{solicitacao.autor.first_name}}
+                                {% else %}
+                                    <img src="https://ui-avatars.com/api/?name={{solicitacao.autor.first_name}}&color=7F9CF5&background=EBF4FF" id="avatar_topo" alt="user-image" width="36" height="36" class="avatar-xs rounded-circle me-1"> {{solicitacao.autor.first_name}}
+                                {% endif %}
+                          
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -47,22 +48,27 @@
                                         Job
                                     </a>
                                 </li>
+                               {% if solicitacao.perfil.cargo < 3 %}
                                 <li class="nav-item">
                                     <a href="#profile1" data-bs-toggle="tab" aria-expanded="true" class="nav-link rounded-0 ">
-                                        Adicionar Peças
+                                        Adicionar Peças  
                                     </a>
                                 </li>
+                          
+
+                
                                 <li class="nav-item">
                                     <a href="#settings1" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-0">
                                         Tarefas Designadas
                                     </a>
                                 </li>
+                       
                                 <li class="nav-item">
                                     <a href="#solicitacao" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-0">
                                         Dados da Solicitação
                                     </a>
                                 </li>
-                                
+                                {% endif %}
                             </ul>
 
                             <div class="tab-content">

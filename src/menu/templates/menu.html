@@ -388,24 +388,24 @@
                         <li class="side-nav-item">
                             <a href="/meus-jobs" class="side-nav-link">
                                 <i class="ri-list-check-3"></i> 
-                                <span> Meus Jobs </span>
+                                <span> Meus Jobs {{solicitacao.perfil.cargo}}</span>
                             </a>
                         </li>
-
+                        {% if perm < 3 %}
                         <li class="side-nav-item">
                             <a href="/todos-jobs" class="side-nav-link">
                                 <i class="ri-todo-line"></i>
                                 <span> Todos os Jobs </span>
                             </a>
                         </li>
-
+                       
                         <li class="side-nav-item">
                           <a href="/gerir-time" class="side-nav-link">
                               <i class="ri-group-2-line"></i>
                               <span> Gerir Time </span>
                           </a>
                       </li>
-
+                      {% endif %}
 
 
 

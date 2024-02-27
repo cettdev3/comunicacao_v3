@@ -43,7 +43,8 @@
                                             {% if item.foto %}
                                                 <img src="{{item.foto}}" alt="Arya S" class="rounded-circle me-2" height="24" width="24"> {{item.autor.first_name}} - <small class="badge badge-outline-warning">{{item.cargo}}</small>
                                             {% else %}
-                                                <img src="{% static 'layouts/assets/images/users/avatar-1.jpg' %}"  class="rounded-circle me-2" height="24" width="24"> {{item.autor.first_name}} - <small class="badge badge-outline-warning">{{item.cargo}}</small>
+
+                                                <img src="https://ui-avatars.com/api/?name={{item.autor.first_name}}&color=7F9CF5&background=EBF4FF" id="avatar_topo"  class="rounded-circle me-2" height="24" width="24"> {{item.autor.first_name}} - <small class="badge badge-outline-warning">{{item.cargo}}</small>
                                             {% endif %}
                                         </h5>
                                     </div>

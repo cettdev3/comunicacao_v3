@@ -63,7 +63,7 @@
 
                     <div class="card border-secondary border">
                         <div class="card-body">
-                            <h5 class="card-title text-success">Descrição da Entrega</h5>
+                            <h5 class="card-title text-success">Descrição da Entrega {{foto.cargo}}</h5>
                         {% if demanda.descricao_entrega %}
                             <p class="card-text">{{demanda.descricao_entrega|safe}}</p>
                         {% else %}
@@ -99,7 +99,8 @@
         
                         </div> <!-- end card-body-->
                         
-                    </div> 
+                    </div>
+                    {% if perm.cargo < 3 %}
                     <div class="row">
                         <div class="col-4">
                             <div class="mb-3">
@@ -138,6 +139,7 @@
                             </div>
                         </div>
             </div>
+            {% endif %}
         </div>
     </div><!-- /.modal-content --> 
 </div><!-- /.modal-dialog -->

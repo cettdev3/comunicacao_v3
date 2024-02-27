@@ -34,25 +34,31 @@ def timeline(solicitacao,autorId,descricao):
 
 @login_required(login_url='/')
 def Minhas_Tarefas(request):
-    solicitacoes = Solicitacoes.objects.filter(pecas__demandas__designante=request.user).distinct()
-    
-    for solicitacao in solicitacoes:
-        total_demandas = Demandas.objects.filter(peca__solicitacao=solicitacao,designante_id = request.user.id).count()
-        demandas_finalizadas = Demandas.objects.filter(peca__solicitacao=solicitacao, status=5, designante_id = request.user.id).count()
+    try:
+        solicitacoes = Solicitacoes.objects.filter(pecas__demandas__designante=request.user).distinct()
+        if solicitacoes is not None:
+            for solicitacao in solicitacoes:
+                total_demandas = Demandas.objects.filter(peca__solicitacao=solicitacao,designante_id = request.user.id).count()
+                demandas_finalizadas = Demandas.objects.filter(peca__solicitacao=solicitacao, status=5, designante_id = request.user.id).count()
 
-        demandas_andamento = Demandas.objects.filter(peca__solicitacao=solicitacao, status=2,designante_id = request.user.id).count()
-        demandas_revisao = Demandas.objects.filter(peca__solicitacao=solicitacao).filter(status=3,designante_id = request.user.id).count()
-        demandas_analise = Demandas.objects.filter(peca__solicitacao=solicitacao).filter(status=4,designante_id = request.user.id).count()
-        demandas_entregues = Demandas.objects.filter(peca__solicitacao=solicitacao, status=6,designante_id = request.user.id).count()
-        solicitacao.total_demandas = total_demandas
-        solicitacao.demandas_finalizadas = demandas_finalizadas + demandas_entregues
-        solicitacao.demandas_andamento = demandas_andamento
-        solicitacao.demandas_revisao = demandas_revisao
-        solicitacao.demandas_analise = demandas_analise
-        solicitacao.demandas_entregues = demandas_entregues
-        
+                demandas_andamento = Demandas.objects.filter(peca__solicitacao=solicitacao, status=2,designante_id = request.user.id).count()
+                demandas_revisao = Demandas.objects.filter(peca__solicitacao=solicitacao).filter(status=3,designante_id = request.user.id).count()
+                demandas_analise = Demandas.objects.filter(peca__solicitacao=solicitacao).filter(status=4,designante_id = request.user.id).count()
+                demandas_entregues = Demandas.objects.filter(peca__solicitacao=solicitacao, status=6,designante_id = request.user.id).count()
+                solicitacao.total_demandas = total_demandas
+                solicitacao.demandas_finalizadas = demandas_finalizadas + demandas_entregues
+                solicitacao.demandas_andamento = demandas_andamento
+                solicitacao.demandas_revisao = demandas_revisao
+                solicitacao.demandas_analise = demandas_analise
+                solicitacao.demandas_entregues = demandas_entregues
+                
+            foto =  Perfil.objects.filter(user_profile_id = request.user.id).first()
+            perm = foto.cargo
+            return render(request,'minhas_tarefas.html',{'solicitacoes':solicitacoes,'foto':foto,'perm':perm})
+
+    except:
         foto =  Perfil.objects.filter(user_profile_id = request.user.id).first()
-    return render(request,'minhas_tarefas.html',{'solicitacoes':solicitacoes,'foto':foto})
+        return render(request,'minhas_tarefas.html',{'solicitacoes':solicitacoes,'foto':foto})
 
 @login_required(login_url='/')
 def Show_Modal_Task(request):
@@ -61,7 +67,7 @@ def Show_Modal_Task(request):
     arquivos_solicitacao = Arquivos_Solicitacoes.objects.filter(solicitacao_id = solicitacao.id).all()
     usuarios = User.objects.all()
     pecas = Pecas.objects.filter(solicitacao=solicitacao, demandas__designante_id=request.user.id).distinct()
-
+    perfil = Perfil.objects.filter(user_profile_id = request.user.id).first()
     all_pecas = Pecas.objects.filter(solicitacao_id = solicitacao.id).all()
 
     for peca in pecas:
@@ -78,7 +84,7 @@ def Show_Modal_Task(request):
     solicitacao.todas_pecas = all_pecas
     solicitacao.usuarios = usuarios
     solicitacao.arquivos = arquivos_solicitacao
-
+    solicitacao.perfil = perfil
 
     return render(request,'ajax/ajax_task_detail.html',{'solicitacao':solicitacao})
 
