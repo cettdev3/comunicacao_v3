@@ -27,7 +27,7 @@
                             <h5>Solicitante:</h5>
                             <div id="tooltip-container3">
                                 {% if solicitacao.perfil.foto %}
-                                    <img src="{{foto.foto}}" id="avatar_topo" alt="user-image" width="36" height="36" class="avatar-xs rounded-circle me-1"> {{solicitacao.autor.first_name}}
+                                    <img src="{{solicitacao.perfil.foto}}" id="avatar_topo" alt="user-image" width="36" height="36" class="avatar-xs rounded-circle me-1"> {{solicitacao.autor.first_name}}
                                 {% else %}
                                     <img src="https://ui-avatars.com/api/?name={{solicitacao.autor.first_name}}&color=7F9CF5&background=EBF4FF" id="avatar_topo" alt="user-image" width="36" height="36" class="avatar-xs rounded-circle me-1"> {{solicitacao.autor.first_name}}
                                 {% endif %}
@@ -48,6 +48,13 @@
                                         Job
                                     </a>
                                 </li>
+
+                                <li class="nav-item">
+                                    <a href="#settings1" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-0">
+                                        Tarefas Designadas
+                                    </a>
+                                </li>
+
                                {% if solicitacao.perfil.cargo < 3 %}
                                 <li class="nav-item">
                                     <a href="#profile1" data-bs-toggle="tab" aria-expanded="true" class="nav-link rounded-0 ">
@@ -57,11 +64,7 @@
                           
 
                 
-                                <li class="nav-item">
-                                    <a href="#settings1" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-0">
-                                        Tarefas Designadas
-                                    </a>
-                                </li>
+                                
                        
                                 <li class="nav-item">
                                     <a href="#solicitacao" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-0">
@@ -198,6 +201,7 @@
                                 </div>
                                 <div class="tab-pane" id="settings1">
                                     <div class="row">
+                                        {% if solicitacao.perfil.cargo < 3 %}
                                         <div class="col-4">
                                             <div class="mb-3">
                                                 
@@ -223,7 +227,7 @@
                                                
                                             </div>
                                         </div>
-
+                                      
                                         <div class="col-4">
                                             <div class="mb-3">
                                                 
@@ -242,7 +246,7 @@
                                                 <button onclick="designarPessoa('{{solicitacao.id}}')" style="width: 100%;" type="button" class="btn btn-warning"><i class="ri-user-follow-fill me-1"></i> <span>Designar</span> </button>
                                             </div>
                                         </div>
-
+                                        {% endif %}
                                         <div class="col-12">
                                             <div class="mb-3">
                                                 <div class="table-responsive-sm">

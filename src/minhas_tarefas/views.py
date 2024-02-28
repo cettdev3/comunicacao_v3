@@ -67,7 +67,7 @@ def Show_Modal_Task(request):
     arquivos_solicitacao = Arquivos_Solicitacoes.objects.filter(solicitacao_id = solicitacao.id).all()
     usuarios = User.objects.all()
     pecas = Pecas.objects.filter(solicitacao=solicitacao, demandas__designante_id=request.user.id).distinct()
-    perfil = Perfil.objects.filter(user_profile_id = request.user.id).first()
+    perfil = Perfil.objects.filter(user_profile_id = solicitacao.autor_id).first()
     all_pecas = Pecas.objects.filter(solicitacao_id = solicitacao.id).all()
 
     for peca in pecas:
@@ -210,7 +210,7 @@ def showDemandaModal(request):
     demanda = Demandas.objects.filter(id=demanda_id).first()
     arquivos_demandas = Arquivos_Demandas.objects.filter(demanda_id=demanda_id).all()
     demanda.arquivos_demandas = arquivos_demandas
-
+    
 
     return render(request,'ajax/ajax_demanda_task.html',{'demanda':demanda,'perfil':perfil}) 
 
