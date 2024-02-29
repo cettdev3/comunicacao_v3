@@ -70,7 +70,8 @@ def Jobs_Individual(request):
             demandas_append.append( demanda.peca.solicitacao.titulo)
             demandas_list.append(demanda)
     foto =  Perfil.objects.filter(user_profile_id = request.user.id).first()
-    return render(request,'jobs_individuais.html',{'demandas':demandas,'demandas_list':demandas_list,'foto':foto})
+    perm = foto.cargo
+    return render(request,'jobs_individuais.html',{'demandas':demandas,'demandas_list':demandas_list,'foto':foto,'perm':perm})
 
 @login_required(login_url='/')
 def Get_Pecas(request):

@@ -49,11 +49,7 @@
                                     </a>
                                 </li>
 
-                                <li class="nav-item">
-                                    <a href="#settings1" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-0">
-                                        Tarefas Designadas
-                                    </a>
-                                </li>
+                                
 
                                {% if solicitacao.perfil.cargo < 3 %}
                                 <li class="nav-item">
@@ -62,10 +58,16 @@
                                     </a>
                                 </li>
                           
+                                {% endif %}
 
+                                <li class="nav-item">
+                                    <a href="#settings1" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-0">
+                                        Tarefas Designadas
+                                    </a>
+                                </li>
                 
                                 
-                       
+                                {% if solicitacao.perfil.cargo < 3 %}
                                 <li class="nav-item">
                                     <a href="#solicitacao" data-bs-toggle="tab" aria-expanded="false" class="nav-link rounded-0">
                                         Dados da Solicitação

@@ -256,8 +256,12 @@
                                                         <a href="javascript: void(0);" class="avatar-group-item"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
                                                             title="{{solicitacao.autor.first_name}}">
-                                                            <img src="{% static 'layouts/assets/images/users/avatar-1.jpg' %}" alt=""
-                                                                class="rounded-circle avatar-xs"> <span style="color:gray"> {{solicitacao.autor.first_name}}</span>
+                                                            {% if solicitacao.foto_solicitante %}
+                                                            <img src="{{solicitacao.foto_solicitante}}" id="avatar_topo" alt="user-image" width="42" height="42" class="rounded-circle avatar-xs"><span style="color:gray"> {{solicitacao.autor.first_name}}</span>
+                                                            {% else %}
+                                                            <img src="https://ui-avatars.com/api/?name={{solicitacao.autor.first_name}}&color=7F9CF5&background=EBF4FF" id="avatar_topo" alt="user-image" width="42" height="42" class="rounded-circle"><span style="color:gray"> {{solicitacao.autor.first_name}}</span>
+                                                            {% endif %}
+                                                          
                                                         </a>
                                                     
                                                     </div>

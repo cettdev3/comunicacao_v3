@@ -51,8 +51,10 @@ def Minhas_Tarefas(request):
                 solicitacao.demandas_revisao = demandas_revisao
                 solicitacao.demandas_analise = demandas_analise
                 solicitacao.demandas_entregues = demandas_entregues
+                foto_solicitante = Perfil.objects.filter(user_profile_id = solicitacao.autor_id).first()
                 
             foto =  Perfil.objects.filter(user_profile_id = request.user.id).first()
+            
             perm = foto.cargo
             return render(request,'minhas_tarefas.html',{'solicitacoes':solicitacoes,'foto':foto,'perm':perm})
 
