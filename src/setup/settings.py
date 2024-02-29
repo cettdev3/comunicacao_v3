@@ -111,30 +111,30 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-   'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'comunicacao_v3',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
-        'OPTION': {'init_command':"SET sql_mode='STRICT_TRANS_TABLE',"},
-    },
-
-}
-
 # DATABASES = {
-#     'default': {
+#    'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': config.DATABASE_NAME,  # type: ignore
-#         'USER': config.DATABASE_USER,  # type: ignore
-#         'PASSWORD': config.DATABASE_PASS,  # type: ignore
-#         'HOST': config.DATABASE_HOST,  # type: ignore
-#         'PORT': config.DATABASE_PORT,  # type: ignore
-#         'OPTION': {'init_command': "SET sql_mode='STRICT_TRANS_TABLE',"},
-#     }
+#         'NAME': 'comunicacao_v3',
+#         'USER': 'root',
+#         'PASSWORD': '',
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#         'OPTION': {'init_command':"SET sql_mode='STRICT_TRANS_TABLE',"},
+#     },
+
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config.DATABASE_NAME,  # type: ignore
+        'USER': config.DATABASE_USER,  # type: ignore
+        'PASSWORD': config.DATABASE_PASS,  # type: ignore
+        'HOST': config.DATABASE_HOST,  # type: ignore
+        'PORT': config.DATABASE_PORT,  # type: ignore
+        'OPTION': {'init_command': "SET sql_mode='STRICT_TRANS_TABLE',"},
+    }
+}
 
 CSRF_COOKIE_VALUE = '@Rpypkkc86xpmfb4'
 # Password validation
