@@ -26,8 +26,8 @@
                         <div class="mb-4" id="tooltip-container">
                             <h5>Solicitante:</h5>
                             <div id="tooltip-container3">
-                                {% if solicitacao.perfil.foto %}
-                                    <img src="{{solicitacao.perfil.foto}}" id="avatar_topo" alt="user-image" width="36" height="36" class="avatar-xs rounded-circle me-1"> {{solicitacao.autor.first_name}}
+                                {% if solicitacao.perfil_solicitante.foto %}
+                                    <img src="{{solicitacao.perfil_solicitante.foto}}" id="avatar_topo" alt="user-image" width="36" height="36" class="avatar-xs rounded-circle me-1"> {{solicitacao.autor.first_name}}
                                 {% else %}
                                     <img src="https://ui-avatars.com/api/?name={{solicitacao.autor.first_name}}&color=7F9CF5&background=EBF4FF" id="avatar_topo" alt="user-image" width="36" height="36" class="avatar-xs rounded-circle me-1"> {{solicitacao.autor.first_name}}
                                 {% endif %}
@@ -265,10 +265,10 @@
                                                                 {% for demanda in peca.demandas_relacionadas.all %}
                                                                     <tr>
                                                                         <td class="table-user">
-                                                                            <img src="{% static 'layouts/assets/images/users/avatar-6.jpg' %}" alt="table-user" class="me-2 rounded-circle" />
+                                                                            <!-- <img src="{% static 'layouts/assets/images/users/avatar-6.jpg' %}" alt="table-user" class="me-2 rounded-circle" /> -->
                                                                             {{ demanda.designante.first_name }}
                                                                         </td>
-                                                                        <td>17/11/2023</td>
+                                                                        <td>{{ demanda.data_designacao|date:"d/m/Y" }}</td>
                                                                         <td>{{ peca.titulo }} </td>
                                                                        
                                                                         {% if demanda.status == 1 %}
@@ -350,7 +350,7 @@
                     </div> 
                 </div>
 
-                <ul class="nav nav-tabs nav-bordered mb-3">
+                <!-- <ul class="nav nav-tabs nav-bordered mb-3">
                     <li class="nav-item">
                         <a href="#home-b1" data-bs-toggle="tab" aria-expanded="false" class="nav-link active">
                             Comentários
@@ -361,9 +361,9 @@
                             Arquivos
                         </a>
                     </li>
-                </ul>
+                </ul> -->
 
-                <div class="tab-content">
+                <!-- <div class="tab-content">
                     <div class="tab-pane show active" id="home-b1">
                         <textarea class="form-control mb-2" placeholder="Escreva seu comentário" id="example-textarea" rows="3"></textarea>
                         <div class="text-end">
@@ -470,7 +470,7 @@
 
                         
                     </div>
-                </div>
+                </div> -->
 
             </div> 
         </div>

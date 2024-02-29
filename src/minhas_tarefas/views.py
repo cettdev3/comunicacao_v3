@@ -67,7 +67,8 @@ def Show_Modal_Task(request):
     arquivos_solicitacao = Arquivos_Solicitacoes.objects.filter(solicitacao_id = solicitacao.id).all()
     usuarios = User.objects.all()
     pecas = Pecas.objects.filter(solicitacao=solicitacao, demandas__designante_id=request.user.id).distinct()
-    perfil = Perfil.objects.filter(user_profile_id = solicitacao.autor_id).first()
+    perfil = Perfil.objects.filter(user_profile_id = request.user.id).first()
+    perfil_solicitante = Perfil.objects.filter(user_profile_id = solicitacao.autor_id).first()
     all_pecas = Pecas.objects.filter(solicitacao_id = solicitacao.id).all()
 
     for peca in pecas:
