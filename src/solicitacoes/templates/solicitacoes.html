@@ -323,7 +323,20 @@ function modalEntragas(solicitacaoId) {
 }
 
 function RealizaSolicitacao(){
-    var form = document.getElementById("form_solicitacao");
+    var inputData = document.getElementById("prazo_entrega").value;
+    var dataInserida = new Date(inputData.split("/").reverse().join("-")); // Converter para o formato "yyyy-mm-dd"
+    var dataAtual = new Date();
+
+    // Comparar as datas
+    if (dataInserida < dataAtual) {
+       
+        Swal.fire({
+            icon: 'error',
+            title: 'Ops!',
+            text: "O prazo de entrega não pode ser menor que a data atual!"
+        });
+} else {
+        var form = document.getElementById("form_solicitacao");
     var formData = new FormData(form);  // Use FormData para incluir campos de arquivo]
 
     var fileInput = document.getElementById('fileInput');
@@ -385,6 +398,9 @@ function RealizaSolicitacao(){
             });
         }
     });
+    }
+
+    
 }
 
 $(document).ready(function() {
