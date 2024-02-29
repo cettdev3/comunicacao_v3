@@ -29,12 +29,12 @@ SECRET_KEY = 'django-insecure-^@w1%@#ie2k%)pz&=g4p^&1&0(z*16l61!ezp*t9pwrb9i(k3w
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-# CSRF_TRUSTED_ORIGINS = [
-#     'https://*.cett.org.br',
-#     'http://*.cett.org.br',
-#     'https://*.cett.dev.br',
-#     'http://*.cett.dev.br',
-# ]
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.cett.org.br',
+    'http://*.cett.org.br',
+    'https://*.cett.dev.br',
+    'http://*.cett.dev.br',
+]
 
 # Application definition
 
