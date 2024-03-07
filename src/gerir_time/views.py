@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from perfil.models import Perfil
 from django.db import transaction
+from django.contrib.auth.hashers import make_password
 
 def get_und(und,usuario,request):
     unidade = Perfil.objects.filter(und = und).count()
@@ -35,7 +36,7 @@ def Cadastrar_Usuario(request):
     nome = request.POST.get('nome','')
     email = request.POST.get('email','')
     usuario = request.POST.get('usuario','')
-    password = request.POST.get('password','')
+    senha = request.POST.get('password','')
     cargo = request.POST.get('cargo','')
     unidade = request.POST.get('unidade','')
 
@@ -45,11 +46,11 @@ def Cadastrar_Usuario(request):
     else:
         try:
             with transaction.atomic():
-                usuario = User.objects.create(
+                usuario = User.objects.create_user(
                     username = usuario,
                     email = email,
                     first_name = nome,
-                    password = password
+                    password = senha
                 )
                 perfil = Perfil.objects.create(
                     user_profile = usuario,
@@ -63,7 +64,7 @@ def Cadastrar_Usuario(request):
                 usuario.perfil = perfil
                 usuario.save()
             foto = Perfil.objects.filter(user_profile_id = request.user.id).first()
-            return render(request,'ajax/tbl_usuarios.html',{'usuarios':usuarios,'foto': foto})
+            return render(request,'ajax/ajax_tbl_user.html',{'usuarios':usuarios,'foto': foto})
         except:
             return JsonResponse({'erro': 'Usuário ja existe!'}, status=400)
 
@@ -82,7 +83,7 @@ def Alterar_Usuario(request):
     nome = request.POST.get('nome_modal','')
     email = request.POST.get('email_modal','')
     usuario = request.POST.get('usuario_modal','')
-    password = request.POST.get('password_modal','')
+    senha = request.POST.get('senha_modal','')
     cargo = request.POST.get('cargo_modal','')
     unidade = request.POST.get('unidade_modal','')
 
@@ -102,8 +103,8 @@ def Alterar_Usuario(request):
             usuario = User.objects.get(id=user_id)
             usuario.first_name = nome
             usuario.email = email
-            if password:
-                usuario.password = password
+            if senha:
+                usuario.set_password(senha)
             usuario.save()
 
         
@@ -115,8 +116,8 @@ def Alterar_Usuario(request):
             usuario = User.objects.get(id=user_id)
             usuario.first_name = nome
             usuario.email = email
-            if password:
-                usuario.password = password
+            if senha:
+                usuario.set_password(senha)
             usuario.save()
 
         usuarios = User.objects.all()

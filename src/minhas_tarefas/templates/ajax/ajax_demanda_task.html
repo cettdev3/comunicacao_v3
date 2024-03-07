@@ -42,38 +42,50 @@
             </div> 
             {% if perfil.cargo < 3 %}
             <div class="row">
-                <div class="col-4">
-                    <div class="mb-3">
-                        <button {% if demanda.status != 5 and demanda.status != 6 %} disabled {% endif %} style="width: 100%;" type="button" onclick="acaoDemanda('{{demanda.id}}','1')" class="btn btn-danger"><i class="ri-corner-up-left-line me-1"></i> <span>Reabrir Demanda</span> </button>
-                    </div>
-                </div>
-                <div class="col-4">
+
+                <div class="col-6">
                     <div class="mb-3">
                         <button  {% if demanda.status != 4 %} disabled {% endif %} style="width: 100%;" type="button" onclick="revisaoDemanda('{{demanda.id}}')" class="btn btn-warning"><i class="ri-draft-line me-1"></i> <span>Solicitar Revisão</span> </button>
                     </div>
                 </div>
-                <div class="col-4">
+                <div class="col-6">
                     <div class="mb-3">
                         {% if demanda.designante_id == request.user.id and perfil.und != 5 and demanda.status < 5 %}
-                        <button style="width: 100%;" type="button" onclick="acaoDemanda('{{demanda.id}}','5')" class="btn btn-success"><i class="ri-check-double-line me-1"></i> <span>Aprovar Demanda</span> </button>
+                        <button style="width: 100%;" type="button" onclick="acaoDemanda('{{demanda.id}}','5')" class="btn btn-success"><i class="ri-check-double-line me-1"></i> <span>Enviar P/ Gerência</span> </button>
                         {% else %}
                             {% if demanda.status == 5 and demanda.designante_id != request.user.id %}
                             <button  style="width: 100%;" type="button" onclick="acaoDemanda('{{demanda.id}}','6')" class="btn btn-success"><i class="ri-check-double-line me-1"></i> <span>Enviar P/ Solicitante</span> </button>
                             {% else %}
-                            <button {% if demanda.status != 4 %} disabled {% endif %} style="width: 100%;" type="button" onclick="acaoDemanda('{{demanda.id}}','5')" class="btn btn-success"><i class="ri-check-double-line me-1"></i> <span>Aprovar Demanda</span> </button>
+                            <button {% if demanda.status != 4 %} disabled {% endif %} style="width: 100%;" type="button" onclick="GerenteDemanda()" class="btn btn-success"><i class="ri-check-double-line me-1"></i> <span>Enviar P/ Gerência</span> </button>
                             {% endif %}
                         {% endif %}
 
                     </div>
                 </div>
-
+                <div class="col-12">
+                    <div class="mb-3">
+                        <div class="col-12" id="envia_gerente" style="display: none;">
+                            <div class="mb-3">
+                                <label for="solicitacaotext" class="form-label">Informe o Gerente:</label>
+                                <select id="select2_gerente" class="js-example-basic-single" name="select2_gerente">
+                                    {%  %}               
+                                    <option value="1">Normal</option>
+                          
+                               
+                              </select>
+                             
+                                <button onclick="acaoDemanda('{{demanda.id}}','5')" style="width: 100%;" type="button" class="btn btn-soft-success rounded-pill mt-2"> <i class="ri-corner-up-left-fill"></i> Enviar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-12">
                     <div class="mb-3">
                         <div class="col-12" id="motivo_revisao" style="display: none;">
                             <div class="mb-3">
                                 <label for="solicitacaotext" class="form-label">Informe o Motivo da Revisão:</label>
                                 <textarea class="summernote"  id="motivo_revisao_text" name="motivo_revisao_text"></textarea>
-                                <button onclick="acaoDemanda('{{demanda.id}}','3')" style="width: 100%;" type="button" class="btn btn-soft-danger rounded-pill mt-2"> <i class="ri-corner-up-left-fill"></i> Solicitar Revisão</button>
+                                <button onclick="acaoDemanda('{{demanda.id}}','5')" style="width: 100%;" type="button" class="btn btn-soft-danger rounded-pill mt-2"> <i class="ri-corner-up-left-fill"></i> Solicitar Revisão</button>
                             </div>
                         </div>
                     </div>
@@ -85,7 +97,11 @@
 </div><!-- /.modal-dialog -->
 
 <script>
-
+$(document).ready(function() {
+    $("#select2_gerente").select2({
+    dropdownParent: $("#bs-example-modal-lg")
+  });
+});
 function acaoDemanda(demandaID,status){
     var XCSRFToken = '{{ csrf_token }}';
     var motivo = document.getElementById('motivo_revisao_text').value;
@@ -156,8 +172,8 @@ function acaoDemanda(demandaID,status){
     if (status == '5') {
 
         Swal.fire({
-        title: 'Aprovar Demanda',
-        text: 'Deseja realmente aprovar a demanda?',
+        title: 'Enviar para Gerência',
+        text: 'Deseja realmente enviar esta demanda para aprovação da gerência?',
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#d33',
@@ -180,8 +196,8 @@ function acaoDemanda(demandaID,status){
                     
                     Swal.fire({
                         icon: 'success',
-                        title: 'Demanda Aprovada!',
-                        text: "A demanda foi aprovada com sucesso!",
+                        title: 'Demanda Enviada!',
+                        text: "A demanda foi para a gerência com sucesso!",
                     }).then((result) => {
                         // Ação a ser realizada após o botão "OK" ser clicado
                         if (result.isConfirmed) {
@@ -321,11 +337,17 @@ function acaoDemanda(demandaID,status){
 
     }
 
-
 function revisaoDemanda(){
     var elemento = document.getElementById("motivo_revisao");
     elemento.style.display = 'block';
 }
+
+function GerenteDemanda(){
+    var elemento = document.getElementById("envia_gerente");
+    elemento.style.display = 'block';
+}
+
+
 
 $('.summernote').summernote(
     {

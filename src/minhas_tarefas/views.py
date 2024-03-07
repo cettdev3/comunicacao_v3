@@ -72,7 +72,7 @@ def Show_Modal_Task(request):
     perfil = Perfil.objects.filter(user_profile_id = request.user.id).first()
     perfil_solicitante = Perfil.objects.filter(user_profile_id = solicitacao.autor_id).first()
     all_pecas = Pecas.objects.filter(solicitacao_id = solicitacao.id).all()
-
+    gerentes = Perfil.objects.filter(cargo=1).all()
     for peca in pecas:
         demandas_relacionadas = Demandas.objects.filter(peca_id=peca.id).first()
         peca.demanda_relacionada = demandas_relacionadas
@@ -88,6 +88,8 @@ def Show_Modal_Task(request):
     solicitacao.usuarios = usuarios
     solicitacao.arquivos = arquivos_solicitacao
     solicitacao.perfil = perfil
+    solicitacao.perfil_solicitante = perfil_solicitante
+    solicitacao.gerentes = gerentes
 
     return render(request,'ajax/ajax_task_detail.html',{'solicitacao':solicitacao})
 
@@ -113,11 +115,25 @@ def Concluir_Demanda(request):
             und = Perfil.objects.filter(user_profile=request.user).first()
             demanda = Demandas.objects.get(id=demandaId)
             if und.und <= 4:
-                demanda.status = 5
+                demanda.status = 6
                 description = f'{request.user.first_name} concluiu a designação'
             else:
                 demanda.status = 4
                 description = f'{request.user.first_name} concluiu a entrega e está em análise'
+
+                #PEGAR O RESPONSAVEL DA UNIDADE E REABRIR A DEMANDA DE DESIGNAR PESSOAS
+                undidade = demanda.peca.solicitacao.tipo_projeto
+
+                #BUSAR O RESPONSAVEL DA UNIDADE NO PERFIL
+                perfil = Perfil.objects.filter(und=undidade).first()
+                usuario = perfil.user_profile_id
+
+                #BUSCA A PEÇA CHAMADA DESIGNAR DEMANDAS REFERENTE A SOLICITAÇÃO 
+                peca = Demandas.objects.filter(peca__titulo = "Designar Demandas", designante_id = usuario).first()
+                peca.status = 1
+                peca.save()
+                
+
             demanda.descricao_entrega = descricao
             demanda.save()
 
@@ -233,14 +249,30 @@ def revisaDemanda(request):
         timeline(solicitacao,request.user.id,f'{request.user.first_name} revisou a demanda de {demanda.designante.first_name} na peça {demanda.peca.titulo}.')
 
     elif status == '5':
-        demanda = Demandas.objects.get(id=demanda_id)
-        demanda.status = 5
-        demanda.save()
-        if request.user.id == demanda.designante_id:
-            timeline(solicitacao,request.user.id,f'{request.user.first_name} finalizou a designação da demanda na peça {demanda.peca.titulo}.')
-        else:
-            timeline(solicitacao,request.user.id,f'{request.user.first_name} aprovou a entrega da demanda de {demanda.designante.first_name} na peça {demanda.peca.titulo}.')
-    
+        # demanda = Demandas.objects.get(id=demanda_id)
+        # demanda.status = 5
+        # demanda.save()
+        # if request.user.id == demanda.designante_id:
+        #     timeline(solicitacao,request.user.id,f'{request.user.first_name} finalizou a designação da demanda na peça {demanda.peca.titulo}.')
+        # else:
+        #     timeline(solicitacao,request.user.id,f'{request.user.first_name} aprovou a entrega da demanda de {demanda.designante.first_name} na peça {demanda.peca.titulo} e enviou para aprovação da gerência.')
+
+            #DESIGNO PARA APROVAÇÃO DO GERENTE
+            # 1 - VERIFICO SE HA UMA PEÇA DE APROVAÇÃO, SE TIVER ATUALIZO O STATUS, SE NAO TIVER CRIA UMA NOVA
+            peca = Demandas.objects.filter(peca__solicitacao_id = solicitacao.id, peca__titulo = "Aprovar Demandas").first()
+            print(peca)
+            if peca:
+                pass
+            else:
+
+                #CRIO A PEÇA APROVAR DEMANDAS
+                peca = Pecas.objects.create(titulo="Aprovar Demandas",solicitacao_id = solicitacao.id)
+
+                #CRIO A DEMANDA E VINCULO UM USUARIO A ESTA DEMANDA
+                demanda = Demandas.objects.create(peca_id = peca.id,autor_id = solicitacao.request.user.id,solicitacao_id = solicitacao.id) 
+                
+
+
     elif status == '6':
         demanda = Demandas.objects.get(id=demanda_id)
         entregas_realizadas = Entregas.objects.filter(demanda_id=demanda_id).count()

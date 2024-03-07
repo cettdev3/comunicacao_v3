@@ -91,6 +91,7 @@
                                     <option value="3">CETT</option>
                                     <option value="4">BASILEU</option>
                                     <option value="5">EXTERNO</option>
+                                    <option value="6">GERAL</option>
 
                                     
                                 </select>
@@ -155,7 +156,7 @@
                                         </td>
                                        <td>
                                         {% if usuario.perfil.foto %}
-                                        <img src="{{foto.foto}}" id="avatar_topo" alt="user-image" width="36" height="36" class="rounded-circle">
+                                        <img src="{{usuario.perfil.foto}}" id="avatar_topo" alt="user-image" width="36" height="36" class="rounded-circle">
                                         {% else %}
                                         <img src="https://ui-avatars.com/api/?name={{usuario.first_name}}&color=7F9CF5&background=EBF4FF" id="avatar_topo" alt="user-image" width="36" height="36" class="rounded-circle">
                                         {% endif %}
@@ -164,7 +165,7 @@
                                        <td>{{usuario.username}}</td>
                                        <td>{{usuario.email}}</td>
                                        <td>
-                                        {% if usuario.perfil.und == 1 %}
+                                        {% if usuario.perfil.und == 1 or usuario.perfil.und == 6 %}
                                             <span class="badge bg-primary text-light">{{usuario.perfil.get_und_display}}</span>
                                         {% elif usuario.perfil.und == 2 %}
                                             <span class="badge bg-secondary text-light">{{usuario.perfil.get_und_display}}</span>
@@ -172,7 +173,7 @@
                                             <span class="badge bg-success text-light">{{usuario.perfil.get_und_display}}</span>
                                         {% elif usuario.perfil.und == 4 %}
                                             <span class="badge bg-danger text-light">{{usuario.perfil.get_und_display}}</span>
-                                        {% elif usuario.perfil.und == 5 %}
+                                        {% elif usuario.perfil.und == 5  %}
                                             <span class="badge bg-warning text-light">{{usuario.perfil.get_und_display}}</span>
                                         {% else %}
                                             <span class="badge bg-dark text-light">Unidade Não Informada</span>

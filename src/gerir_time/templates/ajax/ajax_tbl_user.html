@@ -28,7 +28,7 @@
         <td>{{usuario.username}}</td>
         <td>{{usuario.email}}</td>
         <td>
-        {% if usuario.perfil.und == 1 %}
+        {% if usuario.perfil.und == 1 or usuario.perfil.und == 6 %}
             <span class="badge bg-primary text-light">{{usuario.perfil.get_und_display}}</span>
         {% elif usuario.perfil.und == 2 %}
             <span class="badge bg-secondary text-light">{{usuario.perfil.get_und_display}}</span>
