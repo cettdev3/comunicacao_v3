@@ -81,7 +81,7 @@ class Pecas(models.Model):
 
 
 class Demandas(models.Model):
-    choice_status = [(1,'A Fazer'),(2,'Em Progresso'),(3,'Em Revisão'),(4,'Em Análise'),(5,'Aguardando Gerência'),(6,'Concluído')]
+    choice_status = [(1,'A Fazer'),(2,'Em Progresso'),(3,'Em Revisão'),(4,'P/ Análise'),(5,'Aguardando Gerência'),(6,'Concluído')]
     choice_prioridade = [(1,'Normal'),(2,'Urgente')]
     id = models.AutoField(primary_key=True)
     peca = models.ForeignKey(Pecas,on_delete=models.CASCADE,null=False,blank=False)

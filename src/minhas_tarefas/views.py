@@ -229,9 +229,9 @@ def showDemandaModal(request):
     demanda = Demandas.objects.filter(id=demanda_id).first()
     arquivos_demandas = Arquivos_Demandas.objects.filter(demanda_id=demanda_id).all()
     demanda.arquivos_demandas = arquivos_demandas
-    
+    gerentes = Perfil.objects.filter(cargo=1).all()
 
-    return render(request,'ajax/ajax_demanda_task.html',{'demanda':demanda,'perfil':perfil}) 
+    return render(request,'ajax/ajax_demanda_task.html',{'demanda':demanda,'perfil':perfil,'gerentes':gerentes}) 
 
 @login_required(login_url='/')
 def revisaDemanda(request):
@@ -259,30 +259,44 @@ def revisaDemanda(request):
 
             #DESIGNO PARA APROVAÇÃO DO GERENTE
             # 1 - VERIFICO SE HA UMA PEÇA DE APROVAÇÃO, SE TIVER ATUALIZO O STATUS, SE NAO TIVER CRIA UMA NOVA
+            gerente = request.POST.get('gerente','')
             peca = Demandas.objects.filter(peca__solicitacao_id = solicitacao.id, peca__titulo = "Aprovar Demandas").first()
             print(peca)
             if peca:
                 pass
             else:
+                # choice_status = [(1,'A Fazer'),(2,'Em Progresso'),(3,'Em Revisão'),(4,'Em Análise'),(5,'Aguardando Gerência'),(6,'Concluído')]
+                # choice_prioridade = [(1,'Normal'),(2,'Urgente')]
+                # id = models.AutoField(primary_key=True)
+                # peca = models.ForeignKey(Pecas,on_delete=models.CASCADE,null=False,blank=False)
+                # designante = models.ForeignKey(User,on_delete=models.CASCADE)
+                # autor = models.ForeignKey(User, related_name='designante',on_delete=models.CASCADE)
+                # data_designacao = models.DateField(default=timezone.now, null=True, blank=True) 
+                # prioridade = models.IntegerField(choices=choice_prioridade,null=False,blank=False,default=1)
+                # descricao_entrega = models.TextField(null=False,blank=False,default="Nenhuma Descrição de Entrega")
+                # data_entrega = models.DateField(default=timezone.now, null=True, blank=True) 
+                # devolutiva = models.TextField(null=False,blank=False,default="")
+                # status = models.IntegerField(choices=choice_status,null=False,blank=False)
 
                 #CRIO A PEÇA APROVAR DEMANDAS
                 peca = Pecas.objects.create(titulo="Aprovar Demandas",solicitacao_id = solicitacao.id)
 
                 #CRIO A DEMANDA E VINCULO UM USUARIO A ESTA DEMANDA
-                demanda = Demandas.objects.create(peca_id = peca.id,autor_id = solicitacao.request.user.id,solicitacao_id = solicitacao.id) 
+                demanda = Demandas.objects.create(peca_id = peca.id,designante_id = gerente,autor_id = request.user.id,prioridade = 1,status = 1) 
                 
-
-
     elif status == '6':
         demanda = Demandas.objects.get(id=demanda_id)
-        entregas_realizadas = Entregas.objects.filter(demanda_id=demanda_id).count()
-        if entregas_realizadas == 0:
-            entrega = Entregas.objects.create(demanda_id=demanda_id,solicitacao_id=solicitacao.id)
-
-
-
         demanda.status = 6
         demanda.save()
+
+        #OBTÉM O AUTOR DA DEMANDA
+        autor = demanda.autor_id
+
+
+        #BUSCA A PEÇA CHAMADA DESIGNAR DEMANDAS REFERENTE A SOLICITAÇÃO 
+        peca = Demandas.objects.filter(peca__titulo = "Designar Demandas", designante_id = autor).first()
+        peca.status = 1
+        peca.save()
 
     elif status == '1':
         demanda = Demandas.objects.get(id=demanda_id)
