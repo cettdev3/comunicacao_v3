@@ -209,7 +209,7 @@
                                                 
                                                 <select id="select2_peca_design" class="js-example-basic-single" name="peca">
                                                     {% for peca in solicitacao.todas_pecas  %}
-                                                        {% if peca.titulo != "Designar Demandas" %}
+                                                        {% if peca.titulo != "Designar Demandas" and peca.titulo != "Aprovar Demandas" %}
                                                         <option value="{{peca.id}}">{{peca.titulo}}</option>
                                                         {% endif %}
                                                     {% endfor %}

@@ -114,7 +114,7 @@ def Concluir_Demanda(request):
 
             und = Perfil.objects.filter(user_profile=request.user).first()
             demanda = Demandas.objects.get(id=demandaId)
-            if und.und <= 4:
+            if und.und <= 4 or und.cargo == 1:
                 demanda.status = 6
                 description = f'{request.user.first_name} concluiu a designação'
             else:
@@ -259,11 +259,15 @@ def revisaDemanda(request):
 
             #DESIGNO PARA APROVAÇÃO DO GERENTE
             # 1 - VERIFICO SE HA UMA PEÇA DE APROVAÇÃO, SE TIVER ATUALIZO O STATUS, SE NAO TIVER CRIA UMA NOVA
+            
             gerente = request.POST.get('gerente','')
             peca = Demandas.objects.filter(peca__solicitacao_id = solicitacao.id, peca__titulo = "Aprovar Demandas").first()
             print(peca)
             if peca:
-                pass
+                demanda = Demandas.objects.get(id=demanda_id)
+                peca.status = 1
+                peca.save()
+                timeline(solicitacao,request.user.id,f'{request.user.first_name} enviou a entrega de {demanda.designante.first_name} na peça {demanda.peca.titulo} para {peca.designante.first_name}.')
             else:
                 # choice_status = [(1,'A Fazer'),(2,'Em Progresso'),(3,'Em Revisão'),(4,'Em Análise'),(5,'Aguardando Gerência'),(6,'Concluído')]
                 # choice_prioridade = [(1,'Normal'),(2,'Urgente')]
@@ -297,7 +301,7 @@ def revisaDemanda(request):
         peca = Demandas.objects.filter(peca__titulo = "Designar Demandas", designante_id = autor).first()
         peca.status = 1
         peca.save()
-
+        timeline(solicitacao,request.user.id,f'{request.user.first_name} aprovou a demanda de {demanda.designante.first_name} na peça {demanda.peca.titulo}.')
     elif status == '1':
         demanda = Demandas.objects.get(id=demanda_id)
         demanda.status = 1
