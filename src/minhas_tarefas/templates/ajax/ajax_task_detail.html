@@ -191,8 +191,10 @@
                                                     <tbody id="tbl_pecas">
                                                         {% for peca in solicitacao.todas_pecas %}
                                                         <tr>
+                                                            {% if peca.titulo != "Designar Demandas" and peca.titulo != "Aprovar Demandas" %}
                                                             <td>{{peca.id}}</td>
                                                             <td>{{peca.titulo}}</td>
+                                                            {% endif %}
                                                         </tr>
                                                         {% endfor %}
                                                     </tbody>
