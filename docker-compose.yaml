@@ -43,21 +43,23 @@ services:
             - ./media:/home/${APP_USER_NAME}/${APP_NAME}/media
             - ./data/uploads:/home/${APP_USER_NAME}/${APP_NAME}/uploads
         networks:
-            - db
+            - default
             - backend
+
     database_comunicacao_cett:
         image: mariadb:latest
         restart: on-failure
         environment:
-            MARIADB_ROOT_PASSWORD: numsei
-            MARIADB_DATABASE: app
-            MARIADB_USER: app
-            MARIADB_PASSWORD: numsei
+            MARIADB_ROOT_PASSWORD: ${DB_PASS}
+            MARIADB_DATABASE: ${DB_DT_NAME}
+            MARIADB_USER: ${DB_USER}
+            MARIADB_PASSWORD: ${DB_PASS}
         volumes:
             - ./data/dadabase:/var/lib/mysql
             - ./logs/database:/var/log/mysql
         networks:
-            - db
+            - default
+
     admin:
         restart: always
         image: phpmyadmin/phpmyadmin
@@ -85,11 +87,14 @@ services:
             - "traefik.http.routers.comunicacao-cett-db_https.entrypoints=websecure"
             - "traefik.http.routers.comunicacao-cett-db_https.tls.certresolver=letsencryptresolver"
         networks:
-            - db
+            - default
             - backend
+
 networks:
+    default:
+        driver: bridge
+        external: false
+        name: ${COMPOSE_PROJECT_NAME}-network
     backend:
         external: true
         name: backend
-    db:
-        driver: bridge
