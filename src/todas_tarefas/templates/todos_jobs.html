@@ -1,0 +1,461 @@
+{% extends 'menu.html' %}
+{% load static %}
+{% block content %}
+<style>
+.file-icon {
+    font-size: 24px;
+    margin-right: 10px;
+}
+
+.remove-button {
+    cursor: pointer;
+    color: red;
+}
+
+
+</style>
+<div class="content-page">
+    <div class="content">
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box justify-content-between d-flex align-items-lg-center flex-lg-row flex-column">     
+                        <h4 class="page-title">Todos os Jobs</h4>
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item active">Todos os Jobs</li>
+                        </ol>
+                    </div>
+                </div>
+            </div> 
+            
+            <div class="col-md-12">
+                <div class="card">
+                    <h5 class="card-header bg-dark-subtle">Minhas Solicitações</h5>
+                    <div class="card-body">
+                        <form id="formFilters">
+                        <div class="row">
+                            <div class="col-2">
+                                <div class="mb-3">
+                                    <label for="simpleinput" class="form-label">ID:</label>
+                                    <input type="text" class="form-control" name="idSolicitacao" id="idSolicitacao" placeholder="Informe o id">
+                                </div>
+                            </div>
+                        <div class="col-3">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Solicitação:</label>
+                                <select class="form-control select2" data-toggle="select2" name="solicitacao" id="solicitacao" onchange="sendFilter()">
+                                    <option></option>
+                                    {% for solicitacao in solicitacoes %}
+                                    <option value="{{solicitacao.id}}">{{solicitacao.titulo}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-2">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Data da Solicitação:</label>
+                                <input type="text" class="form-control" placeholder="Informe o vencimento" name="data_solicitacao" id="data_solicitacao" data-toggle="input-mask" data-mask-format="00/00/0000" maxlength="10">
+                            </div>
+                        </div>
+
+                        <div class="col-2">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Setor:</label>
+                                <select class="form-control select2" name="setor" id="setor" data-toggle="select2" onchange="sendFilter()">
+                                    <option></option>
+                                    <option value="2">COTEC</option>
+                                    <option value="1">EFG</option>
+                                    <option value="4">BASILEU</option>
+                                    <option value="3">CETT</option>
+                                    
+                                </select>
+                            </div>
+                        </div>
+     
+                        <div class="col-3">
+                            <div class="mb-3">
+                                <label for="simpleinput" class="form-label">Status:</label>
+                                <select class="form-control select2" name="status" id="status" data-toggle="select2" onchange="sendFilter()">
+                                    <option></option>
+                                    <option value="1">Em Análise</option>
+                                    <option value="2">Em Produção</option>
+                                    <option value="3">Concluída</option>
+                                    <option value="4">Devolvida</option>
+                                    <option value="5">Cancelada</option>
+                                    
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                        </form>
+                        <div class="table-responsive-sm">
+                            <table class="table table-centered mb-0">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>ID - {{perm}}</th>
+                                        <th>Título</th>
+                                        <th>Data da Solicitação</th>
+                                        <th>Prazo de Entrega</th>
+                                        <th>Setor</th>
+                                        <th>Solicitante</th>
+                                        <th>Status</th>
+                                        {% if perm < 3 %}
+                                        <th>Timeline</th>
+                                        {% endif %}
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_solicitacoes">
+                                {% for solicitacao in paginas %}
+
+                                    <tr style="cursor: pointer;"  {% if solicitacao.perfil.und == 5 and solicitacao.status != 4 %} onclick="modalEntragas('{{solicitacao.id}}')" {% elif solicitacao.status == 4 %} onclick="retificarSolicitacao('{{solicitacao.id}}')" {% elif  solicitacao.perfil.und < 5 and solicitacao.status != 4 %} onclick="acessarSolicitacao('{{solicitacao.id}}')" {% endif %}>
+                                        <td>#{{solicitacao.id}}</td>
+                                        <td>{{solicitacao.titulo}}</td>
+                                        <td>{{solicitacao.data_solicitacao|date:'d/m/Y'}}</td>
+                                        <td>{{solicitacao.prazo_entrega|date:'d/m/Y'}}</td>
+                                        <td>{{solicitacao.get_projeto_display}}</td>
+                                        <td>
+                                            <div id="tooltip-container3">
+                                            {% if solicitacao.perfil.foto %}
+                                                <img src="{{solicitacao.perfil.foto}}" id="avatar_topo" alt="user-image" width="36" height="36" class="avatar-xs rounded-circle me-1"> {{solicitacao.autor.first_name}}
+                                            {% else %}
+                                                <img src="https://ui-avatars.com/api/?name={{solicitacao.autor.first_name}}&color=7F9CF5&background=EBF4FF" id="avatar_topo" alt="user-image" width="36" height="36" class="avatar-xs rounded-circle me-1"> {{solicitacao.autor.first_name}}
+                                            {% endif %}
+                                      
+                                            </div>
+                                        </td>
+                                        {% if solicitacao.status == 1 %}
+                                        <td><span class="badge badge-outline-warning rounded-pill">{{solicitacao.get_status_display}}</span></td>
+                                        {% elif solicitacao.status == 2 %}
+                                        <td><span class="badge badge-outline-info rounded-pill">{{solicitacao.get_status_display}}</span></td>
+                                        {% elif solicitacao.status == 3 %}
+                                        <td><span class="badge badge-outline-warning rounded-pill">{{solicitacao.get_status_display}}</span></td>
+                                        {% elif solicitacao.status == 4 or solicitacao.status == 5 %}
+                                        <td><span class="badge badge-outline-danger rounded-pill">{{solicitacao.get_status_display}}</span></td>
+                                        {% elif solicitacao.status == 4 or solicitacao.status == 6 %}
+                                        <td><span class="badge badge-outline-success rounded-pill">{{solicitacao.get_status_display}}</span></td>
+                                        {% endif %}
+                                        {% if perm < 3 %}
+                                        <td><a href="/timeline/{{solicitacao.id}}" type="button" class="btn btn-primary"><i class="ri-sticky-note-fill"></i></a> </td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                                
+                              
+                                </tbody>
+                            </table><br>
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                  {% if paginas.has_previous %}
+                                  <li class="page-item">
+                                    <a class="page-link" href="?pagina=1">&laquo; Primeiro</a>
+                                  </li>
+                                    <li class="page-item">
+                                      
+                                      <a class="page-link" href="?pagina={{ paginas.previous_page_number }}">Anterior</a>
+                                    </li>
+                                  {% else %}
+                                    <li class="page-item disabled">
+                                      <a class="page-link" href="#" tabindex="-1" aria-disabled="True">Anterior</a>
+                                    </li>
+                                  {% endif %}
+                
+                                      <li class="page-item active" aria-current="page">
+                                        <span class="page-link">{{ paginas.number }} de {{ paginas.paginator.num_pages }}</span>
+                                      </li>
+                                   
+                                  {% if paginas.has_next %}
+                                 
+                                    <li class="page-item">
+                                      <a class="page-link" href="?pagina={{ paginas.next_page_number }}">Próximo</a>
+                                    </li>
+                                    <li class="page-item">
+                                      <a class="page-link" href="?pagina={{ paginas.paginator.num_pages }}">Último &raquo;</a>
+                                    </li>
+                                  {% else %}
+                                    <li class="page-item disabled">
+                                      <a class="page-link" href="#" tabindex="-1" aria-disabled="True">Próximo</a>
+                                    </li>
+                                  {% endif %}
+                                </ul>
+                              </nav>
+                        </div>
+                    </div> <!-- end card-body-->
+                </div> <!-- end card-->
+            </div>
+            <!-- end row-->
+            
+        </div> <!-- container -->
+
+    </div> <!-- content -->
+
+    <div class="modal fade" id="bs-example-modal-lg"  aria-labelledby="myLargeModalLabel" style="display: none;" aria-hidden="true">
+      
+    </div>
+
+    <!-- Footer Start -->
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <script>document.write(new Date().getFullYear())</script> © CETT - Comunicação
+                </div>
+               
+            </div>
+        </div>
+    </footer>
+    <!-- end Footer -->
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+
+    function modalEntragas(solicitacaoId) {
+        const url = '/ajax/ajax-entregas';
+    
+        $.ajax({
+            url,
+            type: 'GET',
+            data: { 'solicitacao_id': solicitacaoId },
+            success: function(data) {
+                $("#warning-alert-modal").html(data);
+                console.log('era pra abrir')
+                $("#warning-alert-modal").modal('show');
+                
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ops!',
+                    text: 'Não foi possível obter resultados!'
+                });
+            }
+        });
+    }
+    
+    function RealizaSolicitacao(){
+        var inputData = document.getElementById("prazo_entrega").value;
+        var dataInserida = new Date(inputData.split("/").reverse().join("-")); // Converter para o formato "yyyy-mm-dd"
+        var dataAtual = new Date();
+    
+        // Comparar as datas
+        if (dataInserida < dataAtual) {
+           
+            Swal.fire({
+                icon: 'error',
+                title: 'Ops!',
+                text: "O prazo de entrega não pode ser menor que a data atual!"
+            });
+    } else {
+            var form = document.getElementById("form_solicitacao");
+        var formData = new FormData(form);  // Use FormData para incluir campos de arquivo]
+    
+        var fileInput = document.getElementById('fileInput');
+        
+        if (fileInput){
+          for (var i = 0; i < fileInput.files.length; i++) {
+            console.log(fileInput.files[i])
+            formData.append('files[]', fileInput.files[i]);
+        }
+        }
+    
+        console.log(formData)
+        Swal.fire({
+            title: 'Realizar Solicitação?',
+            text: 'Deseja realmente realizar esta solicitação? Caso realize não poderá alterar até que a solicitação seja devolvida',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sim',
+            cancelButtonText: 'Não'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var XCSRFToken = '{{ csrf_token }}';
+                const url = "/realizar-solicitacao";
+                
+                // Use a função $.ajax do jQuery para fazer a solicitação AJAX
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: formData,
+                    headers: { "X-CSRFToken": XCSRFToken },
+                    processData: false,  // Não processar os dados (o FormData já cuida disso)
+                    contentType: false,  // Não definir o tipo de conteúdo (o FormData já cuida disso)
+                    success: function (data) {
+                      $("#tbl_solicitacoes").html(data);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Solicitação Realizada!',
+                            text: "A solicitação foi realizada com sucesso!"
+                        }).then((result) => {
+                            // Ação a ser realizada após o botão "OK" ser clicado
+                            if (result.isConfirmed) {
+                                window.location.href = 'solicitacoes';
+                               
+                            }
+                        });
+                    },
+                    error: function (data) {
+                        console.log(data)
+                        if (data.responseJSON && data.responseJSON.error_message) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Ops!',
+                                text: data.responseJSON.error_message
+                            });
+                        }
+                    }
+                });
+            }
+        });
+        }
+    
+        
+    }
+    
+    $(document).ready(function() {
+      $('#summernote').summernote(
+        {
+      toolbar: [
+        ['style', ['bold', 'italic', 'underline', 'clear']],
+        ['font', ['strikethrough', 'superscript', 'subscript']],
+        ['para', ['ul', 'ol']],
+    
+        // Outras opções de toolbar que você deseja incluir, mas sem 'link'
+      ],
+      // Outras configurações necessárias para o seu uso
+    }
+      );
+    });
+    
+    function showSelectedFiles() {
+                const fileInput = document.getElementById('fileInput');
+                const fileDisplay = document.getElementById('fileDisplay');
+    
+                // Limpa a exibição de arquivos anteriores
+                fileDisplay.innerHTML = "";
+    
+                const files = fileInput.files;
+                for (let i = 0; i < files.length; i++) {
+                    const fileName = files[i].name;
+                    const listItem = document.createElement('div');
+                    listItem.className = "col-auto";
+                    listItem.innerHTML = `
+                        <i class="file-icon ri-upload-cloud-line me-1"></i>
+                        <span style="font-size: 16px;">${fileName}</span>
+                        <i class="remove-button ri-indeterminate-circle-fill" onclick="removeFile(${i})" style="cursor: pointer; color: red; font-size: 20px;"	></i>
+                    `;
+                    fileDisplay.appendChild(listItem);
+                }
+            }
+    
+    function removeFile(index) {
+        const fileInput = document.getElementById('fileInput');
+        const files = Array.from(fileInput.files);
+        files.splice(index, 1);
+    
+        // Cria um novo input de arquivo e copia os arquivos restantes
+        const newFileInput = document.createElement('input');
+        newFileInput.type = 'file';
+        newFileInput.id = 'fileInput';
+        newFileInput.multiple = true;
+        newFileInput.style.display = 'none';
+        newFileInput.addEventListener('change', showSelectedFiles);
+    
+        const dataTransfer = new DataTransfer();
+        files.forEach(file => dataTransfer.items.add(file));
+        newFileInput.files = dataTransfer.files;
+    
+        // Substitui o input de arquivo anterior
+        fileInput.parentNode.replaceChild(newFileInput, fileInput);
+    
+        // Atualize a lista de arquivos selecionados
+        showSelectedFiles();
+    }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+            // Obtém o campo de data
+            const idSolicitacao = document.getElementById("idSolicitacao");
+            const dataSolicitacao = document.getElementById("data_solicitacao");
+    
+            // Adiciona um ouvinte de evento ao campo de data para detectar mudanças
+            idSolicitacao.addEventListener("input", function() {
+                setTimeout(function() {
+                    sendFilter();
+                }, 2000);
+            });
+    
+            dataSolicitacao.addEventListener("input", function() {
+                setTimeout(function() {
+                    sendFilter();
+                }, 2000);
+            });
+    
+    
+        });
+    
+    function sendFilter(){
+       
+          var form = document.getElementById("formFilters");
+          var formData = new FormData(form);
+          var url = '/filter-solicitacoes';
+          // Adiciona manualmente os valores dos campos do formulário ao objeto formData
+          // formData.append("campo_extra", "valor_extra");
+    
+          // Converte o objeto formData em uma string no formato de consulta GET $("#resultados_concluidos").html(data);
+          var queryString = new URLSearchParams(formData).toString();
+    
+          // Concatena a string de consulta GET à URL
+          url += "?" + queryString;
+    
+          $.ajax({
+              url: url,
+              type: 'GET',
+              success: function(data) {
+                  $("#tbl_solicitacoes").html(data);
+                  
+              },
+              error: function(xhr, status, error) {
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Ops!',
+                      text: 'Não foi possível obter resultados!'
+                  });
+              }
+          });
+    
+    
+    
+        }
+    
+    function acessarSolicitacao(solicitacaoId){
+            window.location.href = "/timeline/" + solicitacaoId;
+        }
+    
+    function retificarSolicitacao(solicitacaoId){
+        const url = '/ajax/ajax-retifica-solicitacao';
+    
+        $.ajax({
+            url,
+            type: 'GET',
+            data: { 'solicitacao_id': solicitacaoId },
+            success: function(data) {
+                $("#warning-alert-modal").html(data);
+                $("#warning-alert-modal").modal('show');
+                
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ops!',
+                    text: 'Não foi possível obter resultados!'
+                });
+            }
+        });
+    }
+    </script>
+{% endblock %}

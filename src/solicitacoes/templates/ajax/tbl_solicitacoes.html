@@ -25,6 +25,9 @@
     {% elif solicitacao.status == 4 or solicitacao.status == 6 %}
     <td><span class="badge badge-outline-success rounded-pill">{{solicitacao.get_status_display}}</span></td>
     {% endif %}
+   
+    <td><a href="/timeline/{{solicitacao.id}}" type="button" class="btn btn-primary"><i class="ri-sticky-note-fill"></i></a> </td>
+
 </tr>
 {% endfor %}
 

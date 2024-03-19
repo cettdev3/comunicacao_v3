@@ -4,6 +4,7 @@ from solicitacoes.models import Demandas,Solicitacoes,Pecas,Perfil
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from repositorio.models import Arquivos_Demandas
+from django.core.paginator import Paginator
 
 # Create your views here.
 @login_required(login_url='/')
@@ -94,3 +95,15 @@ def Get_Pecas_Individual(request):
             
         )
     return render(request, 'ajax/ajax_tbl_demandas.html', {'demandas': demandas})
+
+def All_Jobs(request):
+    solicitacoes = Solicitacoes.objects.all().order_by('-id')
+    for solicitacao in solicitacoes:
+        perfil = Perfil.objects.filter(user_profile_id=solicitacao.autor_id).first()
+        solicitacao.perfil = perfil
+    solicitacoes_paginators = Paginator(solicitacoes,50)
+    page_num = request.GET.get('pagina')
+    page = solicitacoes_paginators.get_page(page_num)
+    foto =  Perfil.objects.filter(user_profile_id = request.user.id).first()
+    perm = foto.cargo
+    return render(request,'todos_jobs.html',{'paginas':page,'solicitacoes':solicitacoes,'foto':foto,'perm':perm})
