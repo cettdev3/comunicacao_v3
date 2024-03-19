@@ -194,18 +194,22 @@ def Designar_Usuário(request):
 
 @login_required(login_url='/')
 def alterarSolicitacao(request):
-    prazo_entrega = request.POST.get('prazo','')
-    prioridade = request.POST.get('prioridade','')
-    briefing = request.POST.get('briefing','')
-    solicitacao_id = request.POST.get('solicitacao_id','')
+    try:
+        prazo_entrega = request.POST.get('prazo','')
+        prioridade = request.POST.get('prioridade','')
+        briefing = request.POST.get('briefing','')
+        solicitacao_id = request.POST.get('solicitacao_id','')
+        text = "<br><br><b>Briefing Antigo<b><hr>"
+        solicitacao = Solicitacoes.objects.get(id=solicitacao_id)
+        brf = briefing + text + solicitacao.briefing
+        solicitacao.prazo_entrega = prazo_entrega
+        solicitacao.prioridade = prioridade
+        solicitacao.briefing = brf
+        solicitacao.save()
 
-    solicitacao = Solicitacoes.objects.get(id=solicitacao_id)
-    solicitacao.prazo_entrega = prazo_entrega
-    solicitacao.prioridade = prioridade
-    solicitacao.briefing = briefing
-    solicitacao.save()
-
-    return JsonResponse({"success_message": "Solicitação Alterada!"}, status=200)
+        return JsonResponse({"success_message": "Solicitação Alterada!"}, status=200)
+    except Exception as e:
+        return JsonResponse({"error":True,"error_message": str(e)}, status=400)
 
 @login_required(login_url='/')
 def devolveSolicitacao(request):
