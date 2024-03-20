@@ -207,6 +207,7 @@ def alterarSolicitacao(request):
         solicitacao.briefing = brf
         solicitacao.save()
 
+        timeline(solicitacao,request.user.id,f'{request.user.first_name} alterou a solicitação.<br><br> <b>Prazo de Entrega</b>: {prazo_entrega} <br><b>Prazo de Entrega:</b> {prazo_entrega}<br> <b>Prioridade:</b> {prioridade} <br><br><b>Briefing:</b> {briefing}')
         return JsonResponse({"success_message": "Solicitação Alterada!"}, status=200)
     except Exception as e:
         return JsonResponse({"error":True,"error_message": str(e)}, status=400)

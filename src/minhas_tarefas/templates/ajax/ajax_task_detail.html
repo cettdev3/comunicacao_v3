@@ -325,6 +325,39 @@
                                                 <textarea class="summernote"  id="solicitacaotext" name="solicitacaotext"></textarea>
                                             </div>
                                         </div>
+                                        {% if solicitacao.arquivos %}
+                                        <div class="card border-primary border">
+                                            <div class="card-body">
+                                                <h5 class="card-title text-primary">Arquivos Anexados</h5>
+                                                
+                                                <div class="row">
+                                                    {% for arquivo in solicitacao.arquivos %}
+                                                    <div class="col-12">
+                                                        <div class="mb-3">
+                                                            <a style="width: 100%;" href="{{arquivo.rota}}" class="btn btn-soft-secondary">
+                                                                <i class="ri-file-fill"></i><br>{{ arquivo.rota|cut:"/media/" }}
+                                                            </a>
+                                                            <a style="width: 100%;" href="{{arquivo.rota}}" class="btn btn-soft-danger">
+                                                                <i class="ri-close-circle-fill"></i> Remover Arquivo
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                    <div class="col-12">
+                                                        <label for="fileInput" class="btn btn-info" style="width: 100%;">
+                                                            <i class="ri-upload-cloud-line me-1"></i> Anexar Arquivos
+                                                          </label>
+                                                       
+                                                    </div> 
+                                                    <div class="col-12">  
+                                                        <input style="width: 100%;" type="file" id="fileInput" class="d-none" multiple onchange="showSelectedFiles()">
+                                                        <div class="row" id="fileDisplay"></div>
+                                                    </div>
+                                                   
+                                                </div>
+                                            </div> <!-- end card-body-->
+                                        </div>
+                                        {% endif %}
                                         <div class="col-6">
                                             <div class="mb-3">
                                             
@@ -807,8 +840,52 @@ $(document).ready(function() {
 }
   );
   var briefing = `{{solicitacao.briefing|safe}}`
-  $('#solicitacaotext').summernote('code', briefing);
+  $('#solicitacaotext').summernote('code', "");
 });
 
+function showSelectedFiles() {
+            const fileInput = document.getElementById('fileInput');
+            const fileDisplay = document.getElementById('fileDisplay');
+
+            // Limpa a exibição de arquivos anteriores
+            fileDisplay.innerHTML = "";
+
+            const files = fileInput.files;
+            for (let i = 0; i < files.length; i++) {
+                const fileName = files[i].name;
+                const listItem = document.createElement('div');
+                listItem.className = "col-auto";
+                listItem.innerHTML = `
+                    <i class="file-icon ri-upload-cloud-line me-1"></i>
+                    <span style="font-size: 13px;">${fileName}</span>
+                    <i class="remove-button ri-indeterminate-circle-fill" onclick="removeFile(${i})" style="cursor: pointer; color: red; font-size: 20px;"	></i>
+                `;
+                fileDisplay.appendChild(listItem);
+            }
+        }
+
+function removeFile(index) {
+    const fileInput = document.getElementById('fileInput');
+    const files = Array.from(fileInput.files);
+    files.splice(index, 1);
+
+    // Cria um novo input de arquivo e copia os arquivos restantes
+    const newFileInput = document.createElement('input');
+    newFileInput.type = 'file';
+    newFileInput.id = 'fileInput';
+    newFileInput.multiple = true;
+    newFileInput.style.display = 'none';
+    newFileInput.addEventListener('change', showSelectedFiles);
+
+    const dataTransfer = new DataTransfer();
+    files.forEach(file => dataTransfer.items.add(file));
+    newFileInput.files = dataTransfer.files;
+
+    // Substitui o input de arquivo anterior
+    fileInput.parentNode.replaceChild(newFileInput, fileInput);
+
+    // Atualize a lista de arquivos selecionados
+    showSelectedFiles();
+}
 
 </script>
