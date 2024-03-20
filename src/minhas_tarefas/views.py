@@ -199,7 +199,7 @@ def alterarSolicitacao(request):
         prioridade = request.POST.get('prioridade','')
         briefing = request.POST.get('briefing','')
         solicitacao_id = request.POST.get('solicitacao_id','')
-        text = "<br><br><b>Briefing Antigo<b><hr>"
+        text = "<br><br><b>Briefing Antigo</b><hr>"
         solicitacao = Solicitacoes.objects.get(id=solicitacao_id)
         brf = briefing + text + solicitacao.briefing
         solicitacao.prazo_entrega = prazo_entrega
