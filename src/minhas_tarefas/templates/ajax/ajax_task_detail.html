@@ -306,6 +306,7 @@
                                 </div>
 
                                 <div class="tab-pane " id="solicitacao">
+                                    <form id="form_solicitacao" method="POST"  enctype="multipart/form-data">
                                     <div class="row">
                                         <div class="col-6 mb-2">
                                             <label for="prazo_entrega" class="form-label">Prazo de Entrega</label>
@@ -326,7 +327,7 @@
                                             </div>
                                         </div>
                                         {% if solicitacao.arquivos %}
-                                        <div class="card border-primary border">
+                                        <div class="card border-primary border" id="arquivos_solicitacao">
                                             <div class="card-body">
                                                 <h5 class="card-title text-primary">Arquivos Anexados</h5>
                                                 
@@ -337,7 +338,7 @@
                                                             <a style="width: 100%;" href="{{arquivo.rota}}" class="btn btn-soft-secondary">
                                                                 <i class="ri-file-fill"></i><br>{{ arquivo.rota|cut:"/media/" }}
                                                             </a>
-                                                            <a style="width: 100%;" href="{{arquivo.rota}}" class="btn btn-soft-danger">
+                                                            <a style="width: 100%;" onclick="RemoveArquivos('{{arquivo.id}}')" class="btn btn-soft-danger">
                                                                 <i class="ri-close-circle-fill"></i> Remover Arquivo
                                                             </a>
                                                         </div>
@@ -381,6 +382,7 @@
                                         
                                         
                                     </div>
+                                    </form>
                                 </div>
                             </div>
                         </div> 
@@ -517,7 +519,55 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 
+function RemoveArquivos(file_id){
+    var XCSRFToken = '{{ csrf_token }}';
+    
+    Swal.fire({
+        title: 'Remover Arquivo da Solicitação',
+        text: 'Deseja realmente este arquivo desta solicitação? ',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Não'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const url = "/ajax/remove-file";
 
+           
+            
+            // Use a função $.ajax do jQuery para fazer a solicitação AJAX
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {'arquivo_id':file_id,},
+                headers: { "X-CSRFToken": XCSRFToken },
+                success: function (data) {
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Arquivo Removido!',
+                        text: "Arquivo foi removido da solicitação!",
+                    }).then((result) => {
+                        $("#arquivos_solicitacao").html(data);
+                       
+                    });                                                                                                                                                                            
+                },
+                error: function (data) {
+                    console.log(data)
+                    if (data.responseJSON && data.responseJSON.error_message) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ops!',
+                            text: data.responseJSON.error_message
+                        });
+                    }
+                }
+            });
+        }
+    });
+}
 
 function devolveSolicitacao(solicitacaoID){
     var XCSRFToken = '{{ csrf_token }}';
@@ -585,7 +635,24 @@ function alteraSolicitacao(solicitacaoId){
     var prazo = document.getElementById('prazo_entrega_edit').value;
     var briefing = document.getElementById('solicitacaotext').value;
     var prioridade = document.getElementById('prioridade').value;
+    var form = document.getElementById("form_solicitacao");
+    var formData = new FormData(form);  // Use FormData para incluir campos de arquivo]
+
+    var fileInput = document.getElementById('fileInput');
     
+    if (fileInput){
+      for (var i = 0; i < fileInput.files.length; i++) {
+        console.log(fileInput.files[i])
+        formData.append('files[]', fileInput.files[i]);
+    }
+    }
+
+    formData.append('prazo', prazo);
+    formData.append('briefing', briefing);
+    formData.append('prioridade', prioridade);
+    formData.append('solicitacaoId', solicitacaoId);
+
+
     Swal.fire({
         title: 'Alterar Solicitação',
         text: 'Deseja realmente alterar esta solicitação? ',
@@ -605,8 +672,10 @@ function alteraSolicitacao(solicitacaoId){
             $.ajax({
                 url: url,
                 type: "POST",
-                data: {'solicitacao_id':solicitacaoId,'prazo':prazo,'briefing':briefing,'prioridade':prioridade},
+                data: formData,
                 headers: { "X-CSRFToken": XCSRFToken },
+                processData: false,  // Não processar os dados (o FormData já cuida disso)
+                contentType: false,  // Não definir o tipo de conteúdo (o FormData já cuida disso)
                 success: function (data) {
                     
                     Swal.fire({

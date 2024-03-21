@@ -194,20 +194,32 @@ def Designar_Usuário(request):
 
 @login_required(login_url='/')
 def alterarSolicitacao(request):
+
     try:
         prazo_entrega = request.POST.get('prazo','')
         prioridade = request.POST.get('prioridade','')
         briefing = request.POST.get('briefing','')
-        solicitacao_id = request.POST.get('solicitacao_id','')
+        
+        solicitacao_id = request.POST.get('solicitacaoId','')
+        
         text = "<br><br><b>Briefing Antigo</b><hr>"
         solicitacao = Solicitacoes.objects.get(id=solicitacao_id)
         brf = briefing + text + solicitacao.briefing
         solicitacao.prazo_entrega = prazo_entrega
         solicitacao.prioridade = prioridade
-        solicitacao.briefing = brf
+        if briefing:
+            solicitacao.briefing = brf
         solicitacao.save()
 
         timeline(solicitacao,request.user.id,f'{request.user.first_name} alterou a solicitação.<br><br> <b>Prazo de Entrega</b>: {prazo_entrega} <br><b>Prazo de Entrega:</b> {prazo_entrega}<br> <b>Prioridade:</b> {prioridade} <br><br><b>Briefing:</b> {briefing}')
+        
+        arquivos = request.FILES.getlist('files[]')
+        for arquivo in arquivos:
+            fs1 = FileSystemStorage()
+            filename1 = fs1.save(arquivo.name, arquivo)
+            arquivo_url = fs1.url(filename1)
+            arquivos = Arquivos_Solicitacoes.objects.create(rota = arquivo_url,autor_id = request.user.id, solicitacao_id = solicitacao_id)
+
         return JsonResponse({"success_message": "Solicitação Alterada!"}, status=200)
     except Exception as e:
         return JsonResponse({"error":True,"error_message": str(e)}, status=400)
@@ -314,3 +326,16 @@ def revisaDemanda(request):
         timeline(solicitacao,request.user.id,f'{request.user.first_name} reabriu a demanda de {demanda.designante.first_name} na peça {demanda.peca.titulo}.')
 
     return JsonResponse({"success_message": "Solicitação Devolvida!"}, status=200)
+
+def removeFilesSolicitacao(request):
+    try:
+        file_id = request.POST.get('arquivo_id','')
+        arquivos = Arquivos_Solicitacoes.objects.get(id=file_id)
+        arquivos.delete()
+        arquivos_solicitacao = Arquivos_Solicitacoes.objects.filter(solicitacao_id = arquivos.solicitacao_id).all()
+        
+        return render(request,'ajax/ajax_remove_file_sol.html',{'arquivos':arquivos_solicitacao})
+    except Exception as e:
+        return JsonResponse({"error_message": str(e)}, status=400)
+
+   

@@ -1,0 +1,29 @@
+<div class="card-body">
+    <h5 class="card-title text-primary">Arquivos Anexados</h5>
+    
+    <div class="row">
+        {% for arquivo in arquivos %}
+        <div class="col-12">
+            <div class="mb-3">
+                <a style="width: 100%;" href="{{arquivo.rota}}" class="btn btn-soft-secondary">
+                    <i class="ri-file-fill"></i><br>{{ arquivo.rota|cut:"/media/" }}
+                </a>
+                <a style="width: 100%;" href="{{arquivo.rota}}" class="btn btn-soft-danger">
+                    <i class="ri-close-circle-fill"></i> Remover Arquivo
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="col-12">
+            <label for="fileInput" class="btn btn-info" style="width: 100%;">
+                <i class="ri-upload-cloud-line me-1"></i> Anexar Arquivos
+              </label>
+           
+        </div> 
+        <div class="col-12">  
+            <input style="width: 100%;" type="file" id="fileInput" class="d-none" multiple onchange="showSelectedFiles()">
+            <div class="row" id="fileDisplay"></div>
+        </div>
+       
+    </div>
+</div> <!-- end card-body-->
