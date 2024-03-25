@@ -111,7 +111,7 @@
                                 <tbody id="tbl_solicitacoes">
                                 {% for solicitacao in paginas %}
 
-                                    <tr style="cursor: pointer;"  {% if solicitacao.perfil.und == 5 and solicitacao.status != 4 %} onclick="modalEntragas('{{solicitacao.id}}')" {% elif solicitacao.status == 4 %} onclick="retificarSolicitacao('{{solicitacao.id}}')" {% elif  solicitacao.perfil.und < 5 and solicitacao.status != 4 %} onclick="acessarSolicitacao('{{solicitacao.id}}')" {% endif %}>
+                                    <tr style="cursor: pointer;"  {% if solicitacao.status == 4 %} onclick="retificarSolicitacao('{{solicitacao.id}}')" {% elif  solicitacao.perfil.und < 5 and solicitacao.status != 4 %} onclick="acessarSolicitacao('{{solicitacao.id}}')" {% endif %}>
                                         <td>#{{solicitacao.id}}</td>
                                         <td>{{solicitacao.titulo}}</td>
                                         <td>{{solicitacao.data_solicitacao|date:'d/m/Y'}}</td>
@@ -196,6 +196,10 @@
       
     </div>
 
+    
+    <div id="warning-alert-modal" class="modal fade" tabindex="-1" style="display: none;" aria-hidden="true">
+        
+    </div>
     <!-- Footer Start -->
     <footer class="footer">
         <div class="container-fluid">

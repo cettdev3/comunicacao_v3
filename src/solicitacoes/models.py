@@ -39,6 +39,8 @@ def demandas_update(self):
     elif demandas_pendentes > 0:
         self.status = 2
         self.save()
+    elif self.status == 4:
+        pass
     else:
         self.status = 1
         self.save()
